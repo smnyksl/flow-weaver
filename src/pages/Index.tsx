@@ -4,6 +4,7 @@ import { JournalInput } from '@/components/journal/JournalInput';
 import { EmotionDisplay } from '@/components/journal/EmotionDisplay';
 import { SuggestionList } from '@/components/journal/SuggestionList';
 import { JournalHistory } from '@/components/journal/JournalHistory';
+import { EmotionCalendar } from '@/components/journal/EmotionCalendar';
 import { StatsModal } from '@/components/journal/StatsModal';
 import { RewardsModal } from '@/components/journal/RewardsModal';
 import { useJournal } from '@/hooks/useJournal';
@@ -51,7 +52,8 @@ const Index = () => {
           </div>
           
           {/* Sidebar */}
-          <div className="lg:col-span-1">
+          <div className="lg:col-span-1 space-y-6">
+            <EmotionCalendar entries={entries} />
             <JournalHistory entries={entries} />
           </div>
         </div>
