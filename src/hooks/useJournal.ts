@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { JournalEntry, EmotionAnalysis, Emotion } from '@/types/journal';
 import { getRandomSuggestions } from '@/data/emotionData';
 import { supabase } from '@/integrations/supabase/client';
@@ -8,6 +8,42 @@ export function useJournal() {
   const [entries, setEntries] = useState<JournalEntry[]>([]);
   const [currentAnalysis, setCurrentAnalysis] = useState<EmotionAnalysis | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Load entries from database on mount
+  useEffect(() => {
+    loadEntries();
+  }, []);
+
+  const loadEntries = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('journal_entries')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+
+      const loadedEntries: JournalEntry[] = (data || []).map(entry => ({
+        id: entry.id,
+        content: entry.content,
+        createdAt: new Date(entry.created_at),
+        emotion: {
+          primaryEmotion: entry.primary_emotion as Emotion,
+          intensity: entry.intensity,
+          triggers: entry.triggers || []
+        },
+        suggestions: getRandomSuggestions(entry.primary_emotion as Emotion, 3)
+      }));
+
+      setEntries(loadedEntries);
+    } catch (error) {
+      console.error('Error loading entries:', error);
+      toast.error('Girişler yüklenirken hata oluştu');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const addEntry = useCallback(async (content: string) => {
     setIsAnalyzing(true);
@@ -29,12 +65,26 @@ export function useJournal() {
         triggers: data.triggers || []
       };
 
+      // Save to database
+      const { data: savedEntry, error: saveError } = await supabase
+        .from('journal_entries')
+        .insert({
+          content,
+          primary_emotion: analysis.primaryEmotion,
+          intensity: analysis.intensity,
+          triggers: analysis.triggers
+        })
+        .select()
+        .single();
+
+      if (saveError) throw saveError;
+
       const suggestions = getRandomSuggestions(analysis.primaryEmotion, 3);
       
       const newEntry: JournalEntry = {
-        id: Date.now().toString(),
+        id: savedEntry.id,
         content,
-        createdAt: new Date(),
+        createdAt: new Date(savedEntry.created_at),
         emotion: analysis,
         suggestions,
       };
@@ -65,11 +115,23 @@ export function useJournal() {
         intensity: 5,
         triggers: []
       };
-      
+
+      // Save fallback entry to database
+      const { data: savedEntry, error: saveError } = await supabase
+        .from('journal_entries')
+        .insert({
+          content,
+          primary_emotion: fallbackAnalysis.primaryEmotion,
+          intensity: fallbackAnalysis.intensity,
+          triggers: fallbackAnalysis.triggers
+        })
+        .select()
+        .single();
+
       const newEntry: JournalEntry = {
-        id: Date.now().toString(),
+        id: savedEntry?.id || Date.now().toString(),
         content,
-        createdAt: new Date(),
+        createdAt: new Date(savedEntry?.created_at || Date.now()),
         emotion: fallbackAnalysis,
         suggestions: getRandomSuggestions('neutral', 3),
       };
@@ -81,6 +143,23 @@ export function useJournal() {
     }
   }, []);
 
+  const deleteEntry = useCallback(async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from('journal_entries')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+
+      setEntries(prev => prev.filter(entry => entry.id !== id));
+      toast.success('Giriş silindi');
+    } catch (error) {
+      console.error('Error deleting entry:', error);
+      toast.error('Giriş silinirken hata oluştu');
+    }
+  }, []);
+
   const clearCurrentAnalysis = useCallback(() => {
     setCurrentAnalysis(null);
   }, []);
@@ -89,7 +168,9 @@ export function useJournal() {
     entries,
     currentAnalysis,
     isAnalyzing,
+    isLoading,
     addEntry,
+    deleteEntry,
     clearCurrentAnalysis,
   };
 }

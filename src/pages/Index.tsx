@@ -13,7 +13,7 @@ import { toast } from 'sonner';
 import { Suggestion } from '@/types/journal';
 
 const Index = () => {
-  const { entries, currentAnalysis, isAnalyzing, addEntry } = useJournal();
+  const { entries, currentAnalysis, isAnalyzing, isLoading, addEntry } = useJournal();
   const { achievements, stats, getProgress } = useRewards(entries);
   const [latestSuggestions, setLatestSuggestions] = useState<Suggestion[]>([]);
   const [statsOpen, setStatsOpen] = useState(false);

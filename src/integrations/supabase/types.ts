@@ -14,7 +14,72 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      journal_entries: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          intensity: number
+          primary_emotion: string
+          triggers: string[] | null
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          intensity?: number
+          primary_emotion: string
+          triggers?: string[] | null
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          intensity?: number
+          primary_emotion?: string
+          triggers?: string[] | null
+        }
+        Relationships: []
+      }
+      user_achievements: {
+        Row: {
+          achievement_id: string
+          id: string
+          unlocked_at: string
+        }
+        Insert: {
+          achievement_id: string
+          id?: string
+          unlocked_at?: string
+        }
+        Update: {
+          achievement_id?: string
+          id?: string
+          unlocked_at?: string
+        }
+        Relationships: []
+      }
+      user_stats: {
+        Row: {
+          id: string
+          longest_streak: number
+          total_points: number
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          longest_streak?: number
+          total_points?: number
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          longest_streak?: number
+          total_points?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
