@@ -5,15 +5,19 @@ import { EmotionDisplay } from '@/components/journal/EmotionDisplay';
 import { SuggestionList } from '@/components/journal/SuggestionList';
 import { JournalHistory } from '@/components/journal/JournalHistory';
 import { StatsModal } from '@/components/journal/StatsModal';
+import { RewardsModal } from '@/components/journal/RewardsModal';
 import { useJournal } from '@/hooks/useJournal';
+import { useRewards } from '@/hooks/useRewards';
 import { getRandomSuggestions } from '@/data/emotionData';
 import { toast } from 'sonner';
 import { Suggestion } from '@/types/journal';
 
 const Index = () => {
   const { entries, currentAnalysis, isAnalyzing, addEntry } = useJournal();
+  const { achievements, stats, getProgress } = useRewards(entries);
   const [latestSuggestions, setLatestSuggestions] = useState<Suggestion[]>([]);
   const [statsOpen, setStatsOpen] = useState(false);
+  const [rewardsOpen, setRewardsOpen] = useState(false);
 
   const handleSubmit = async (content: string) => {
     const entry = await addEntry(content);
@@ -25,7 +29,10 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <AppHeader onShowStats={() => setStatsOpen(true)} />
+      <AppHeader 
+        onShowStats={() => setStatsOpen(true)} 
+        onShowRewards={() => setRewardsOpen(true)}
+      />
       
       <main className="container mx-auto px-4 py-8">
         <div className="grid lg:grid-cols-3 gap-6">
@@ -55,6 +62,15 @@ const Index = () => {
         open={statsOpen} 
         onOpenChange={setStatsOpen} 
         entries={entries} 
+      />
+      
+      {/* Rewards Modal */}
+      <RewardsModal
+        open={rewardsOpen}
+        onOpenChange={setRewardsOpen}
+        achievements={achievements}
+        stats={stats}
+        progress={getProgress()}
       />
       
       {/* Background decoration */}
