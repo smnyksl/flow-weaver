@@ -5,17 +5,17 @@ import { EmotionDisplay } from '@/components/journal/EmotionDisplay';
 import { SuggestionList } from '@/components/journal/SuggestionList';
 import { JournalHistory } from '@/components/journal/JournalHistory';
 import { useJournal } from '@/hooks/useJournal';
-import { defaultSuggestions } from '@/data/emotionData';
+import { getRandomSuggestions } from '@/data/emotionData';
 import { toast } from 'sonner';
 
 const Index = () => {
   const { entries, currentAnalysis, isAnalyzing, addEntry } = useJournal();
-  const [latestSuggestions, setLatestSuggestions] = useState<typeof defaultSuggestions.neutral>([]);
+  const [latestSuggestions, setLatestSuggestions] = useState<ReturnType<typeof getRandomSuggestions>>([]);
 
   const handleSubmit = async (content: string) => {
     const entry = await addEntry(content);
     if (entry.emotion) {
-      setLatestSuggestions(defaultSuggestions[entry.emotion.primaryEmotion] || []);
+      setLatestSuggestions(getRandomSuggestions(entry.emotion.primaryEmotion, 3));
       toast.success('Günlük girişin kaydedildi!');
     }
   };

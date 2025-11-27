@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { JournalEntry, EmotionAnalysis, Emotion } from '@/types/journal';
-import { defaultSuggestions } from '@/data/emotionData';
+import { getRandomSuggestions } from '@/data/emotionData';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
@@ -29,7 +29,7 @@ export function useJournal() {
         triggers: data.triggers || []
       };
 
-      const suggestions = defaultSuggestions[analysis.primaryEmotion] || [];
+      const suggestions = getRandomSuggestions(analysis.primaryEmotion, 3);
       
       const newEntry: JournalEntry = {
         id: Date.now().toString(),
@@ -71,7 +71,7 @@ export function useJournal() {
         content,
         createdAt: new Date(),
         emotion: fallbackAnalysis,
-        suggestions: defaultSuggestions.neutral,
+        suggestions: getRandomSuggestions('neutral', 3),
       };
       
       setEntries(prev => [newEntry, ...prev]);
