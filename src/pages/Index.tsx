@@ -7,11 +7,12 @@ import { JournalHistory } from '@/components/journal/JournalHistory';
 import { EmotionCalendar } from '@/components/journal/EmotionCalendar';
 import { StatsModal } from '@/components/journal/StatsModal';
 import { RewardsModal } from '@/components/journal/RewardsModal';
+import { EntryDetailModal } from '@/components/journal/EntryDetailModal';
 import { useJournal } from '@/hooks/useJournal';
 import { useRewards } from '@/hooks/useRewards';
 import { getRandomSuggestions } from '@/data/emotionData';
 import { toast } from 'sonner';
-import { Suggestion } from '@/types/journal';
+import { Suggestion, JournalEntry } from '@/types/journal';
 
 const Index = () => {
   const { entries, currentAnalysis, isAnalyzing, isLoading, addEntry } = useJournal();
@@ -19,6 +20,7 @@ const Index = () => {
   const [latestSuggestions, setLatestSuggestions] = useState<Suggestion[]>([]);
   const [statsOpen, setStatsOpen] = useState(false);
   const [rewardsOpen, setRewardsOpen] = useState(false);
+  const [selectedEntry, setSelectedEntry] = useState<JournalEntry | null>(null);
 
   const handleSubmit = async (content: string) => {
     const entry = await addEntry(content);
@@ -54,7 +56,7 @@ const Index = () => {
           {/* Sidebar */}
           <div className="lg:col-span-1 space-y-6">
             <EmotionCalendar entries={entries} />
-            <JournalHistory entries={entries} />
+            <JournalHistory entries={entries} onEntryClick={setSelectedEntry} />
           </div>
         </div>
       </main>
@@ -73,6 +75,13 @@ const Index = () => {
         achievements={achievements}
         stats={stats}
         progress={getProgress()}
+      />
+      
+      {/* Entry Detail Modal */}
+      <EntryDetailModal
+        entry={selectedEntry}
+        open={!!selectedEntry}
+        onOpenChange={(open) => !open && setSelectedEntry(null)}
       />
       
       {/* Background decoration */}
