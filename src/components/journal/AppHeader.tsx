@@ -1,11 +1,12 @@
-import { BookHeart, BarChart3 } from 'lucide-react';
+import { BookHeart, BarChart3, Trophy } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface AppHeaderProps {
   onShowStats?: () => void;
+  onShowRewards?: () => void;
 }
 
-export function AppHeader({ onShowStats }: AppHeaderProps) {
+export function AppHeader({ onShowStats, onShowRewards }: AppHeaderProps) {
   return (
     <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-10">
       <div className="container mx-auto px-4 py-4">
@@ -20,10 +21,16 @@ export function AppHeader({ onShowStats }: AppHeaderProps) {
             </div>
           </div>
           
-          <Button variant="outline" size="sm" onClick={onShowStats}>
-            <BarChart3 className="w-4 h-4 mr-2" />
-            İstatistikler
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" onClick={onShowRewards}>
+              <Trophy className="w-4 h-4 mr-2" />
+              Ödüller
+            </Button>
+            <Button variant="outline" size="sm" onClick={onShowStats}>
+              <BarChart3 className="w-4 h-4 mr-2" />
+              İstatistikler
+            </Button>
+          </div>
         </div>
       </div>
     </header>
