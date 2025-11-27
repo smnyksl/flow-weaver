@@ -1,7 +1,6 @@
 import { EmotionAnalysis } from '@/types/journal';
-import { emotionLabels, emotionEmojis, emotionColors } from '@/data/emotionData';
-import { cn } from '@/lib/utils';
-import { TrendingUp, AlertTriangle, Heart } from 'lucide-react';
+import { emotionLabels, emotionEmojis } from '@/data/emotionData';
+import { AlertTriangle, Heart } from 'lucide-react';
 
 interface EmotionDisplayProps {
   analysis: EmotionAnalysis;
@@ -23,11 +22,10 @@ export function EmotionDisplay({ analysis }: EmotionDisplayProps) {
             Ana duygu: {emotionLabels[analysis.primaryEmotion]}
           </p>
           <div className="flex items-center gap-2 mt-2">
-            <TrendingUp className="w-4 h-4 text-muted-foreground" />
-            <span className="text-sm text-muted-foreground">Yoğunluk:</span>
+            <span className="text-sm text-muted-foreground">😊 Mutluluk Seviyesi:</span>
             <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
               <div 
-                className={cn('h-full rounded-full transition-all duration-500', emotionColors[analysis.primaryEmotion])}
+                className="h-full rounded-full transition-all duration-500 bg-gradient-to-r from-yellow-400 to-green-500"
                 style={{ width: `${analysis.intensity * 10}%` }}
               />
             </div>
