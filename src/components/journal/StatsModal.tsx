@@ -22,6 +22,19 @@ interface StatsModalProps {
   entries: JournalEntry[];
 }
 
+// Pozitif duygular için mutluluk = yoğunluk, negatif duygular için mutluluk = 10 - yoğunluk + 1
+const calculateHappinessLevel = (emotion: Emotion, intensity: number): number => {
+  const positiveEmotions: Emotion[] = ['happy', 'excited', 'calm'];
+  const negativeEmotions: Emotion[] = ['sad', 'anxious', 'angry'];
+  
+  if (positiveEmotions.includes(emotion)) {
+    return intensity;
+  } else if (negativeEmotions.includes(emotion)) {
+    return Math.max(1, 11 - intensity);
+  }
+  return 5;
+};
+
 export function StatsModal({ open, onOpenChange, entries }: StatsModalProps) {
   const [activeTab, setActiveTab] = useState('overview');
 
@@ -43,6 +56,16 @@ export function StatsModal({ open, onOpenChange, entries }: StatsModalProps) {
 
   const mostCommon = sortedEmotions[0];
   const totalEntries = entries.length;
+
+  // Calculate average happiness level
+  const entriesWithEmotion = entries.filter(e => e.emotion);
+  const avgHappiness = entriesWithEmotion.length > 0
+    ? entriesWithEmotion.reduce((sum, e) => {
+        const happiness = calculateHappinessLevel(e.emotion!.primaryEmotion, e.emotion!.intensity);
+        return sum + happiness;
+      }, 0) / entriesWithEmotion.length
+    : 0;
+  const avgHappinessPercent = Math.round(avgHappiness * 10);
 
   // Calculate average intensity
   const avgIntensity = entries.length > 0
@@ -164,6 +187,26 @@ export function StatsModal({ open, onOpenChange, entries }: StatsModalProps) {
 
             {/* Overview Tab */}
             <TabsContent value="overview" className="space-y-4">
+              {/* Average Happiness - Main Card */}
+              <div className="bg-gradient-to-br from-yellow-400/20 to-green-500/20 rounded-xl p-5 border border-yellow-500/20">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-2xl">😊</span>
+                  <p className="text-sm font-medium text-foreground">Ortalama Mutluluk</p>
+                </div>
+                <div className="flex items-center gap-4">
+                  <p className="text-4xl font-bold text-foreground">%{avgHappinessPercent}</p>
+                  <div className="flex-1">
+                    <div className="h-4 bg-muted rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-gradient-to-r from-yellow-400 to-green-500 rounded-full transition-all"
+                        style={{ width: `${avgHappinessPercent}%` }}
+                      />
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-1">Tüm girişlerin ortalaması</p>
+                  </div>
+                </div>
+              </div>
+
               {/* Quick Stats */}
               <div className="grid grid-cols-2 gap-3">
                 <div className="bg-gradient-to-br from-primary/10 to-accent/10 rounded-lg p-4">
