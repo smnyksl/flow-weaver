@@ -1,14 +1,50 @@
-import { FlowHeader } from '@/components/flowchart/FlowHeader';
-import { FlowDiagram } from '@/components/flowchart/FlowDiagram';
-import { emotionDiaryFlow } from '@/data/emotionDiaryFlow';
+import { useState } from 'react';
+import { AppHeader } from '@/components/journal/AppHeader';
+import { JournalInput } from '@/components/journal/JournalInput';
+import { EmotionDisplay } from '@/components/journal/EmotionDisplay';
+import { SuggestionList } from '@/components/journal/SuggestionList';
+import { JournalHistory } from '@/components/journal/JournalHistory';
+import { useJournal } from '@/hooks/useJournal';
+import { defaultSuggestions } from '@/data/emotionData';
+import { toast } from 'sonner';
 
 const Index = () => {
+  const { entries, currentAnalysis, isAnalyzing, addEntry } = useJournal();
+  const [latestSuggestions, setLatestSuggestions] = useState<typeof defaultSuggestions.neutral>([]);
+
+  const handleSubmit = async (content: string) => {
+    const entry = await addEntry(content);
+    if (entry.emotion) {
+      setLatestSuggestions(defaultSuggestions[entry.emotion.primaryEmotion] || []);
+      toast.success('Günlük girişin kaydedildi!');
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
-      <FlowHeader diagram={emotionDiaryFlow} />
+      <AppHeader />
       
       <main className="container mx-auto px-4 py-8">
-        <FlowDiagram diagram={emotionDiaryFlow} />
+        <div className="grid lg:grid-cols-3 gap-6">
+          {/* Main Column */}
+          <div className="lg:col-span-2 space-y-6">
+            <JournalInput onSubmit={handleSubmit} isAnalyzing={isAnalyzing} />
+            
+            {currentAnalysis && (
+              <div className="grid md:grid-cols-2 gap-6">
+                <EmotionDisplay analysis={currentAnalysis} />
+                {latestSuggestions.length > 0 && (
+                  <SuggestionList suggestions={latestSuggestions} />
+                )}
+              </div>
+            )}
+          </div>
+          
+          {/* Sidebar */}
+          <div className="lg:col-span-1">
+            <JournalHistory entries={entries} />
+          </div>
+        </div>
       </main>
       
       {/* Background decoration */}
