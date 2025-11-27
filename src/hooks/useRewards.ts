@@ -1,7 +1,8 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { Achievement, UserStats } from '@/types/rewards';
 import { JournalEntry } from '@/types/journal';
 import { achievementTemplates, getLevelFromPoints, getPointsForNextLevel } from '@/data/achievementsData';
+import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
 const POINTS_PER_ENTRY = 10;
@@ -9,9 +10,7 @@ const POINTS_PER_STREAK_DAY = 5;
 const POINTS_PER_ACHIEVEMENT = 25;
 
 export function useRewards(entries: JournalEntry[]) {
-  const [achievements, setAchievements] = useState<Achievement[]>(() => 
-    achievementTemplates.map(a => ({ ...a, unlocked: false }))
-  );
+  const [achievements, setAchievements] = useState<Achievement[]>([]);
   const [stats, setStats] = useState<UserStats>({
     totalEntries: 0,
     currentStreak: 0,
@@ -21,6 +20,53 @@ export function useRewards(entries: JournalEntry[]) {
     points: 0,
     level: 1
   });
+  const initializedRef = useRef(false);
+
+  // Load achievements from database on mount
+  useEffect(() => {
+    loadAchievements();
+  }, []);
+
+  const loadAchievements = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('user_achievements')
+        .select('achievement_id, unlocked_at');
+
+      if (error) throw error;
+
+      const unlockedIds = new Set((data || []).map(a => a.achievement_id));
+      const unlockedDates = new Map((data || []).map(a => [a.achievement_id, new Date(a.unlocked_at)]));
+
+      const loadedAchievements = achievementTemplates.map(a => ({
+        ...a,
+        unlocked: unlockedIds.has(a.id),
+        unlockedAt: unlockedDates.get(a.id)
+      }));
+
+      setAchievements(loadedAchievements);
+      initializedRef.current = true;
+    } catch (error) {
+      console.error('Error loading achievements:', error);
+      // Fallback to local state
+      setAchievements(achievementTemplates.map(a => ({ ...a, unlocked: false })));
+      initializedRef.current = true;
+    }
+  };
+
+  const saveAchievement = async (achievementId: string) => {
+    try {
+      const { error } = await supabase
+        .from('user_achievements')
+        .insert({ achievement_id: achievementId });
+
+      if (error && !error.message.includes('duplicate')) {
+        throw error;
+      }
+    } catch (error) {
+      console.error('Error saving achievement:', error);
+    }
+  };
 
   const calculateStreak = useCallback((entries: JournalEntry[]): { current: number; longest: number } => {
     if (entries.length === 0) return { current: 0, longest: 0 };
@@ -100,6 +146,8 @@ export function useRewards(entries: JournalEntry[]) {
           description: achievement.description,
           duration: 5000
         });
+        // Save to database
+        saveAchievement(achievement.id);
         return { ...achievement, unlocked: true, unlockedAt: new Date() };
       }
       
@@ -110,6 +158,8 @@ export function useRewards(entries: JournalEntry[]) {
   }, []);
 
   useEffect(() => {
+    if (!initializedRef.current || achievements.length === 0) return;
+
     const { current, longest } = calculateStreak(entries);
     
     const uniqueEmotions = new Set(
@@ -119,9 +169,9 @@ export function useRewards(entries: JournalEntry[]) {
     const allTriggers = entries.flatMap(e => e.emotion?.triggers || []);
     const uniqueTriggers = new Set(allTriggers).size;
     
+    const unlockedCount = achievements.filter(a => a.unlocked).length;
     const basePoints = entries.length * POINTS_PER_ENTRY;
     const streakBonus = current * POINTS_PER_STREAK_DAY;
-    const unlockedCount = achievements.filter(a => a.unlocked).length;
     const achievementPoints = unlockedCount * POINTS_PER_ACHIEVEMENT;
     const totalPoints = basePoints + streakBonus + achievementPoints;
     
@@ -138,10 +188,12 @@ export function useRewards(entries: JournalEntry[]) {
     setStats(newStats);
     
     const updatedAchievements = checkAchievements(newStats, achievements);
-    if (JSON.stringify(updatedAchievements) !== JSON.stringify(achievements)) {
+    const hasNewUnlocks = updatedAchievements.some((a, i) => a.unlocked !== achievements[i].unlocked);
+    
+    if (hasNewUnlocks) {
       setAchievements(updatedAchievements);
     }
-  }, [entries, calculateStreak, checkAchievements]);
+  }, [entries, achievements, calculateStreak, checkAchievements]);
 
   const getProgress = useCallback(() => {
     const currentLevelPoints = stats.level > 1 ? getPointsForNextLevel(stats.level - 1) : 0;
