@@ -1,4 +1,4 @@
-import { EmotionAnalysis } from '@/types/journal';
+import { EmotionAnalysis, Emotion } from '@/types/journal';
 import { emotionLabels, emotionEmojis } from '@/data/emotionData';
 import { AlertTriangle, Heart } from 'lucide-react';
 
@@ -6,7 +6,22 @@ interface EmotionDisplayProps {
   analysis: EmotionAnalysis;
 }
 
+// Pozitif duygular için mutluluk = yoğunluk, negatif duygular için mutluluk = 10 - yoğunluk + 1
+const calculateHappinessLevel = (emotion: Emotion, intensity: number): number => {
+  const positiveEmotions: Emotion[] = ['happy', 'excited', 'calm'];
+  const negativeEmotions: Emotion[] = ['sad', 'anxious', 'angry'];
+  
+  if (positiveEmotions.includes(emotion)) {
+    return intensity; // Pozitif duygu: yoğunluk = mutluluk
+  } else if (negativeEmotions.includes(emotion)) {
+    return Math.max(1, 11 - intensity); // Negatif duygu: ters hesapla (yüksek yoğunluk = düşük mutluluk)
+  }
+  return 5; // Nötr duygu için orta değer
+};
+
 export function EmotionDisplay({ analysis }: EmotionDisplayProps) {
+  const happinessLevel = calculateHappinessLevel(analysis.primaryEmotion, analysis.intensity);
+  
   return (
     <div className="bg-card rounded-xl border border-border p-6 shadow-soft animate-fade-in">
       <div className="flex items-center gap-2 mb-4">
@@ -26,10 +41,10 @@ export function EmotionDisplay({ analysis }: EmotionDisplayProps) {
             <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
               <div 
                 className="h-full rounded-full transition-all duration-500 bg-gradient-to-r from-yellow-400 to-green-500"
-                style={{ width: `${analysis.intensity * 10}%` }}
+                style={{ width: `${happinessLevel * 10}%` }}
               />
             </div>
-            <span className="text-sm font-medium text-foreground">{analysis.intensity}/10</span>
+            <span className="text-sm font-medium text-foreground">{happinessLevel}/10</span>
           </div>
         </div>
       </div>
