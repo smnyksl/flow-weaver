@@ -4,13 +4,16 @@ import { JournalInput } from '@/components/journal/JournalInput';
 import { EmotionDisplay } from '@/components/journal/EmotionDisplay';
 import { SuggestionList } from '@/components/journal/SuggestionList';
 import { JournalHistory } from '@/components/journal/JournalHistory';
+import { StatsModal } from '@/components/journal/StatsModal';
 import { useJournal } from '@/hooks/useJournal';
 import { getRandomSuggestions } from '@/data/emotionData';
 import { toast } from 'sonner';
+import { Suggestion } from '@/types/journal';
 
 const Index = () => {
   const { entries, currentAnalysis, isAnalyzing, addEntry } = useJournal();
-  const [latestSuggestions, setLatestSuggestions] = useState<ReturnType<typeof getRandomSuggestions>>([]);
+  const [latestSuggestions, setLatestSuggestions] = useState<Suggestion[]>([]);
+  const [statsOpen, setStatsOpen] = useState(false);
 
   const handleSubmit = async (content: string) => {
     const entry = await addEntry(content);
@@ -22,7 +25,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <AppHeader />
+      <AppHeader onShowStats={() => setStatsOpen(true)} />
       
       <main className="container mx-auto px-4 py-8">
         <div className="grid lg:grid-cols-3 gap-6">
@@ -46,6 +49,13 @@ const Index = () => {
           </div>
         </div>
       </main>
+      
+      {/* Stats Modal */}
+      <StatsModal 
+        open={statsOpen} 
+        onOpenChange={setStatsOpen} 
+        entries={entries} 
+      />
       
       {/* Background decoration */}
       <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
