@@ -5,8 +5,7 @@ import { EmotionDisplay } from '@/components/journal/EmotionDisplay';
 import { SuggestionList } from '@/components/journal/SuggestionList';
 import { JournalHistory } from '@/components/journal/JournalHistory';
 import { EmotionCalendar } from '@/components/journal/EmotionCalendar';
-import { StatsModal } from '@/components/journal/StatsModal';
-import { RewardsModal } from '@/components/journal/RewardsModal';
+import { RewardsPanel } from '@/components/journal/RewardsPanel';
 import { EntryDetailModal } from '@/components/journal/EntryDetailModal';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useJournal } from '@/hooks/useJournal';
@@ -14,14 +13,12 @@ import { useRewards } from '@/hooks/useRewards';
 import { getRandomSuggestions } from '@/data/emotionData';
 import { toast } from 'sonner';
 import { Suggestion, JournalEntry } from '@/types/journal';
-import { Calendar, History } from 'lucide-react';
+import { BookOpen, History, Calendar, Trophy } from 'lucide-react';
 
 const Index = () => {
   const { entries, currentAnalysis, isAnalyzing, isLoading, addEntry } = useJournal();
   const { achievements, stats, getProgress } = useRewards(entries);
   const [latestSuggestions, setLatestSuggestions] = useState<Suggestion[]>([]);
-  const [statsOpen, setStatsOpen] = useState(false);
-  const [rewardsOpen, setRewardsOpen] = useState(false);
   const [selectedEntry, setSelectedEntry] = useState<JournalEntry | null>(null);
 
   const handleSubmit = async (content: string) => {
@@ -34,61 +31,60 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      <AppHeader 
-        onShowStats={() => setStatsOpen(true)} 
-        onShowRewards={() => setRewardsOpen(true)}
-      />
+      <AppHeader />
       
-      <main className="flex-1 container mx-auto px-4 py-4 pb-20">
-        <div className="space-y-4 max-w-lg mx-auto">
-          <JournalInput onSubmit={handleSubmit} isAnalyzing={isAnalyzing} />
-          
-          {currentAnalysis && (
-            <div className="space-y-4">
-              <EmotionDisplay analysis={currentAnalysis} />
-              {latestSuggestions.length > 0 && (
-                <SuggestionList suggestions={latestSuggestions} />
+      <Tabs defaultValue="journal" className="flex-1 flex flex-col">
+        <TabsList className="w-full grid grid-cols-4 rounded-none border-b border-border bg-card h-14">
+          <TabsTrigger value="journal" className="flex flex-col items-center gap-1 py-2 data-[state=active]:bg-transparent data-[state=active]:text-primary data-[state=active]:shadow-none">
+            <BookOpen className="w-5 h-5" />
+            <span className="text-xs">Günlük</span>
+          </TabsTrigger>
+          <TabsTrigger value="history" className="flex flex-col items-center gap-1 py-2 data-[state=active]:bg-transparent data-[state=active]:text-primary data-[state=active]:shadow-none">
+            <History className="w-5 h-5" />
+            <span className="text-xs">Geçmiş</span>
+          </TabsTrigger>
+          <TabsTrigger value="calendar" className="flex flex-col items-center gap-1 py-2 data-[state=active]:bg-transparent data-[state=active]:text-primary data-[state=active]:shadow-none">
+            <Calendar className="w-5 h-5" />
+            <span className="text-xs">Takvim</span>
+          </TabsTrigger>
+          <TabsTrigger value="rewards" className="flex flex-col items-center gap-1 py-2 data-[state=active]:bg-transparent data-[state=active]:text-primary data-[state=active]:shadow-none">
+            <Trophy className="w-5 h-5" />
+            <span className="text-xs">Ödüller</span>
+          </TabsTrigger>
+        </TabsList>
+
+        <main className="flex-1 overflow-y-auto">
+          <div className="container mx-auto px-4 py-4 max-w-lg">
+            <TabsContent value="journal" className="mt-0 space-y-4">
+              <JournalInput onSubmit={handleSubmit} isAnalyzing={isAnalyzing} />
+              {currentAnalysis && (
+                <div className="space-y-4">
+                  <EmotionDisplay analysis={currentAnalysis} />
+                  {latestSuggestions.length > 0 && (
+                    <SuggestionList suggestions={latestSuggestions} />
+                  )}
+                </div>
               )}
-            </div>
-          )}
-          
-          {/* Tab Section */}
-          <Tabs defaultValue="history" className="w-full">
-            <TabsList className="w-full grid grid-cols-2">
-              <TabsTrigger value="history" className="flex items-center gap-2">
-                <History className="w-4 h-4" />
-                Geçmiş
-              </TabsTrigger>
-              <TabsTrigger value="calendar" className="flex items-center gap-2">
-                <Calendar className="w-4 h-4" />
-                Takvim
-              </TabsTrigger>
-            </TabsList>
-            <TabsContent value="history">
+            </TabsContent>
+
+            <TabsContent value="history" className="mt-0">
               <JournalHistory entries={entries} onEntryClick={setSelectedEntry} />
             </TabsContent>
-            <TabsContent value="calendar">
+
+            <TabsContent value="calendar" className="mt-0">
               <EmotionCalendar entries={entries} />
             </TabsContent>
-          </Tabs>
-        </div>
-      </main>
-      
-      {/* Stats Modal */}
-      <StatsModal 
-        open={statsOpen} 
-        onOpenChange={setStatsOpen} 
-        entries={entries} 
-      />
-      
-      {/* Rewards Modal */}
-      <RewardsModal
-        open={rewardsOpen}
-        onOpenChange={setRewardsOpen}
-        achievements={achievements}
-        stats={stats}
-        progress={getProgress()}
-      />
+
+            <TabsContent value="rewards" className="mt-0">
+              <RewardsPanel 
+                achievements={achievements} 
+                stats={stats} 
+                progress={getProgress()} 
+              />
+            </TabsContent>
+          </div>
+        </main>
+      </Tabs>
       
       {/* Entry Detail Modal */}
       <EntryDetailModal
