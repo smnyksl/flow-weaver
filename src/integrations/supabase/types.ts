@@ -22,6 +22,7 @@ export type Database = {
           intensity: number
           primary_emotion: string
           triggers: string[] | null
+          user_id: string | null
         }
         Insert: {
           content: string
@@ -30,6 +31,7 @@ export type Database = {
           intensity?: number
           primary_emotion: string
           triggers?: string[] | null
+          user_id?: string | null
         }
         Update: {
           content?: string
@@ -38,6 +40,28 @@ export type Database = {
           intensity?: number
           primary_emotion?: string
           triggers?: string[] | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          display_name: string | null
+          id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -46,16 +70,19 @@ export type Database = {
           achievement_id: string
           id: string
           unlocked_at: string
+          user_id: string | null
         }
         Insert: {
           achievement_id: string
           id?: string
           unlocked_at?: string
+          user_id?: string | null
         }
         Update: {
           achievement_id?: string
           id?: string
           unlocked_at?: string
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -65,18 +92,21 @@ export type Database = {
           longest_streak: number
           total_points: number
           updated_at: string
+          user_id: string | null
         }
         Insert: {
           id?: string
           longest_streak?: number
           total_points?: number
           updated_at?: string
+          user_id?: string | null
         }
         Update: {
           id?: string
           longest_streak?: number
           total_points?: number
           updated_at?: string
+          user_id?: string | null
         }
         Relationships: []
       }

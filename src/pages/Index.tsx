@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { AppHeader } from '@/components/journal/AppHeader';
 import { JournalInput } from '@/components/journal/JournalInput';
 import { EmotionDisplay } from '@/components/journal/EmotionDisplay';
@@ -10,24 +11,45 @@ import { EntryDetailModal } from '@/components/journal/EntryDetailModal';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useJournal } from '@/hooks/useJournal';
 import { useRewards } from '@/hooks/useRewards';
+import { useAuth } from '@/hooks/useAuth';
 import { getRandomSuggestions } from '@/data/emotionData';
 import { toast } from 'sonner';
 import { Suggestion, JournalEntry } from '@/types/journal';
-import { BookOpen, History, Calendar, Trophy } from 'lucide-react';
+import { BookOpen, History, Calendar, Trophy, Loader2 } from 'lucide-react';
 
 const Index = () => {
-  const { entries, currentAnalysis, isAnalyzing, isLoading, addEntry } = useJournal();
-  const { achievements, stats, getProgress } = useRewards(entries);
+  const navigate = useNavigate();
+  const { user, loading: authLoading } = useAuth();
+  const { entries, currentAnalysis, isAnalyzing, isLoading, addEntry } = useJournal(user?.id);
+  const { achievements, stats, getProgress } = useRewards(entries, user?.id);
   const [latestSuggestions, setLatestSuggestions] = useState<Suggestion[]>([]);
   const [selectedEntry, setSelectedEntry] = useState<JournalEntry | null>(null);
 
+  useEffect(() => {
+    if (!authLoading && !user) {
+      navigate('/auth');
+    }
+  }, [user, authLoading, navigate]);
+
   const handleSubmit = async (content: string) => {
     const entry = await addEntry(content);
-    if (entry.emotion) {
+    if (entry?.emotion) {
       setLatestSuggestions(getRandomSuggestions(entry.emotion.primaryEmotion, 3));
       toast.success('Günlük girişin kaydedildi!');
     }
   };
+
+  if (authLoading || isLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (!user) {
+    return null;
+  }
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
