@@ -4,22 +4,30 @@ import { getRandomSuggestions } from '@/data/emotionData';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
-export function useJournal() {
+export function useJournal(userId: string | undefined) {
   const [entries, setEntries] = useState<JournalEntry[]>([]);
   const [currentAnalysis, setCurrentAnalysis] = useState<EmotionAnalysis | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Load entries from database on mount
+  // Load entries from database when userId changes
   useEffect(() => {
-    loadEntries();
-  }, []);
+    if (userId) {
+      loadEntries();
+    } else {
+      setEntries([]);
+      setIsLoading(false);
+    }
+  }, [userId]);
 
   const loadEntries = async () => {
+    if (!userId) return;
+    
     try {
       const { data, error } = await supabase
         .from('journal_entries')
         .select('*')
+        .eq('user_id', userId)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
@@ -46,6 +54,11 @@ export function useJournal() {
   };
 
   const addEntry = useCallback(async (content: string) => {
+    if (!userId) {
+      toast.error('Giriş yapmanız gerekiyor');
+      return null;
+    }
+    
     setIsAnalyzing(true);
     
     try {
@@ -65,14 +78,15 @@ export function useJournal() {
         triggers: data.triggers || []
       };
 
-      // Save to database
+      // Save to database with user_id
       const { data: savedEntry, error: saveError } = await supabase
         .from('journal_entries')
         .insert({
           content,
           primary_emotion: analysis.primaryEmotion,
           intensity: analysis.intensity,
-          triggers: analysis.triggers
+          triggers: analysis.triggers,
+          user_id: userId
         })
         .select()
         .single();
@@ -116,14 +130,15 @@ export function useJournal() {
         triggers: []
       };
 
-      // Save fallback entry to database
+      // Save fallback entry to database with user_id
       const { data: savedEntry, error: saveError } = await supabase
         .from('journal_entries')
         .insert({
           content,
           primary_emotion: fallbackAnalysis.primaryEmotion,
           intensity: fallbackAnalysis.intensity,
-          triggers: fallbackAnalysis.triggers
+          triggers: fallbackAnalysis.triggers,
+          user_id: userId
         })
         .select()
         .single();
@@ -141,7 +156,7 @@ export function useJournal() {
       
       return newEntry;
     }
-  }, []);
+  }, [userId]);
 
   const deleteEntry = useCallback(async (id: string) => {
     try {

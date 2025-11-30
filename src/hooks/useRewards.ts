@@ -9,7 +9,7 @@ const POINTS_PER_ENTRY = 10;
 const POINTS_PER_STREAK_DAY = 5;
 const POINTS_PER_ACHIEVEMENT = 25;
 
-export function useRewards(entries: JournalEntry[]) {
+export function useRewards(entries: JournalEntry[], userId: string | undefined) {
   const [achievements, setAchievements] = useState<Achievement[]>([]);
   const [stats, setStats] = useState<UserStats>({
     totalEntries: 0,
@@ -22,16 +22,24 @@ export function useRewards(entries: JournalEntry[]) {
   });
   const initializedRef = useRef(false);
 
-  // Load achievements from database on mount
+  // Load achievements from database when userId changes
   useEffect(() => {
-    loadAchievements();
-  }, []);
+    if (userId) {
+      loadAchievements();
+    } else {
+      setAchievements(achievementTemplates.map(a => ({ ...a, unlocked: false })));
+      initializedRef.current = true;
+    }
+  }, [userId]);
 
   const loadAchievements = async () => {
+    if (!userId) return;
+    
     try {
       const { data, error } = await supabase
         .from('user_achievements')
-        .select('achievement_id, unlocked_at');
+        .select('achievement_id, unlocked_at')
+        .eq('user_id', userId);
 
       if (error) throw error;
 
@@ -55,10 +63,12 @@ export function useRewards(entries: JournalEntry[]) {
   };
 
   const saveAchievement = async (achievementId: string) => {
+    if (!userId) return;
+    
     try {
       const { error } = await supabase
         .from('user_achievements')
-        .insert({ achievement_id: achievementId });
+        .insert({ achievement_id: achievementId, user_id: userId });
 
       if (error && !error.message.includes('duplicate')) {
         throw error;
@@ -155,7 +165,7 @@ export function useRewards(entries: JournalEntry[]) {
     });
     
     return updatedAchievements;
-  }, []);
+  }, [userId]);
 
   useEffect(() => {
     if (!initializedRef.current || achievements.length === 0) return;
