@@ -34,6 +34,29 @@ export default function Auth() {
     }
   }, [user, loading, navigate]);
 
+  // Handle hash errors from Supabase auth redirects
+  useEffect(() => {
+    const hash = window.location.hash;
+    if (hash) {
+      const params = new URLSearchParams(hash.substring(1));
+      const error = params.get('error');
+      const errorCode = params.get('error_code');
+      const errorDescription = params.get('error_description');
+
+      if (error) {
+        let message = 'Bir hata oluştu';
+        if (errorCode === 'otp_expired') {
+          message = 'Şifre sıfırlama linki geçersiz veya süresi dolmuş. Lütfen yeni bir link talep edin.';
+        } else if (errorDescription) {
+          message = decodeURIComponent(errorDescription.replace(/\+/g, ' '));
+        }
+        toast.error(message);
+        // Clear the hash
+        window.history.replaceState(null, '', window.location.pathname);
+      }
+    }
+  }, []);
+
   const validateForm = (includeDisplayName: boolean) => {
     try {
       authSchema.parse({
