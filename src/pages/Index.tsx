@@ -8,6 +8,7 @@ import { JournalHistory } from '@/components/journal/JournalHistory';
 import { EmotionCalendar } from '@/components/journal/EmotionCalendar';
 import { RewardsPanel } from '@/components/journal/RewardsPanel';
 import { EntryDetailModal } from '@/components/journal/EntryDetailModal';
+import { ExportDataModal } from '@/components/journal/ExportDataModal';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useJournal } from '@/hooks/useJournal';
 import { useRewards } from '@/hooks/useRewards';
@@ -24,6 +25,7 @@ const Index = () => {
   const { achievements, stats, getProgress } = useRewards(entries, user?.id);
   const [latestSuggestions, setLatestSuggestions] = useState<Suggestion[]>([]);
   const [selectedEntry, setSelectedEntry] = useState<JournalEntry | null>(null);
+  const [showExportModal, setShowExportModal] = useState(false);
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -53,7 +55,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      <AppHeader />
+      <AppHeader onExportClick={() => setShowExportModal(true)} />
       
       <Tabs defaultValue="journal" className="flex-1 flex flex-col">
         <TabsList className="w-full grid grid-cols-4 rounded-none border-b border-border bg-card h-14">
@@ -113,6 +115,15 @@ const Index = () => {
         entry={selectedEntry}
         open={!!selectedEntry}
         onOpenChange={(open) => !open && setSelectedEntry(null)}
+      />
+      
+      {/* Export Data Modal */}
+      <ExportDataModal
+        isOpen={showExportModal}
+        onClose={() => setShowExportModal(false)}
+        entries={entries}
+        achievements={achievements}
+        stats={stats}
       />
       
       {/* Background decoration */}
