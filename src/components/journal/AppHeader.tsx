@@ -1,10 +1,21 @@
-import { BookHeart, LogOut } from 'lucide-react';
+import { BookHeart, LogOut, Download, MoreVertical } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 
-export function AppHeader() {
+interface AppHeaderProps {
+  onExportClick?: () => void;
+}
+
+export function AppHeader({ onExportClick }: AppHeaderProps) {
   const { signOut } = useAuth();
   const navigate = useNavigate();
 
@@ -31,9 +42,25 @@ export function AppHeader() {
               <p className="text-xs text-muted-foreground">Duygularını keşfet</p>
             </div>
           </div>
-          <Button variant="ghost" size="icon" onClick={handleSignOut}>
-            <LogOut className="w-5 h-5" />
-          </Button>
+          
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon">
+                <MoreVertical className="w-5 h-5" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={onExportClick}>
+                <Download className="w-4 h-4 mr-2" />
+                Verileri Dışa Aktar
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={handleSignOut} className="text-destructive">
+                <LogOut className="w-4 h-4 mr-2" />
+                Çıkış Yap
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
     </header>
