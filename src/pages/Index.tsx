@@ -4,6 +4,7 @@ import { AppHeader } from '@/components/journal/AppHeader';
 import { JournalInput } from '@/components/journal/JournalInput';
 import { EmotionDisplay } from '@/components/journal/EmotionDisplay';
 import { SuggestionList } from '@/components/journal/SuggestionList';
+import { InsightsPanel } from '@/components/journal/InsightsPanel';
 import { JournalHistory } from '@/components/journal/JournalHistory';
 import { EmotionCalendar } from '@/components/journal/EmotionCalendar';
 import { RewardsPanel } from '@/components/journal/RewardsPanel';
@@ -13,7 +14,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useJournal } from '@/hooks/useJournal';
 import { useRewards } from '@/hooks/useRewards';
 import { useAuth } from '@/hooks/useAuth';
-import { getRandomSuggestions } from '@/data/emotionData';
 import { toast } from 'sonner';
 import { Suggestion, JournalEntry } from '@/types/journal';
 import { BookOpen, History, Calendar, Trophy, Loader2 } from 'lucide-react';
@@ -21,7 +21,7 @@ import { BookOpen, History, Calendar, Trophy, Loader2 } from 'lucide-react';
 const Index = () => {
   const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
-  const { entries, currentAnalysis, isAnalyzing, isLoading, addEntry } = useJournal(user?.id);
+  const { entries, currentAnalysis, currentInsights, isAnalyzing, isLoading, addEntry } = useJournal(user?.id);
   const { achievements, stats, getProgress } = useRewards(entries, user?.id);
   const [latestSuggestions, setLatestSuggestions] = useState<Suggestion[]>([]);
   const [selectedEntry, setSelectedEntry] = useState<JournalEntry | null>(null);
@@ -35,8 +35,11 @@ const Index = () => {
 
   const handleSubmit = async (content: string) => {
     const entry = await addEntry(content);
-    if (entry?.emotion) {
-      setLatestSuggestions(getRandomSuggestions(entry.emotion.primaryEmotion, 3));
+    if (entry) {
+      // Use AI-generated suggestions if available
+      if (entry.suggestions && entry.suggestions.length > 0) {
+        setLatestSuggestions(entry.suggestions);
+      }
       toast.success('Günlük girişin kaydedildi!');
     }
   };
@@ -84,6 +87,12 @@ const Index = () => {
               {currentAnalysis && (
                 <div className="space-y-4">
                   <EmotionDisplay analysis={currentAnalysis} />
+                  {currentInsights && (
+                    <InsightsPanel 
+                      weeklyInsight={currentInsights.weekly} 
+                      monthlyInsight={currentInsights.monthly} 
+                    />
+                  )}
                   {latestSuggestions.length > 0 && (
                     <SuggestionList suggestions={latestSuggestions} />
                   )}

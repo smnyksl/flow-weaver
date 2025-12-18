@@ -1,14 +1,25 @@
-import { useState, useCallback, useEffect } from 'react';
-import { JournalEntry, EmotionAnalysis, Emotion } from '@/types/journal';
+import { useState, useCallback, useEffect, useRef } from 'react';
+import { JournalEntry, EmotionAnalysis, Emotion, Suggestion } from '@/types/journal';
 import { getRandomSuggestions } from '@/data/emotionData';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
+interface AIAnalysisResponse {
+  primaryEmotion: Emotion;
+  intensity: number;
+  triggers: string[];
+  suggestions: Suggestion[];
+  weeklyInsight?: string;
+  monthlyInsight?: string;
+}
+
 export function useJournal(userId: string | undefined) {
   const [entries, setEntries] = useState<JournalEntry[]>([]);
   const [currentAnalysis, setCurrentAnalysis] = useState<EmotionAnalysis | null>(null);
+  const [currentInsights, setCurrentInsights] = useState<{ weekly?: string; monthly?: string } | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const recentSuggestionsRef = useRef<string[]>([]);
 
   // Load entries from database when userId changes
   useEffect(() => {
@@ -45,6 +56,12 @@ export function useJournal(userId: string | undefined) {
       }));
 
       setEntries(loadedEntries);
+      
+      // Track recent suggestions to avoid repetition
+      const recent = loadedEntries.slice(0, 10).flatMap(e => 
+        e.suggestions?.map(s => s.title) || []
+      );
+      recentSuggestionsRef.current = recent;
     } catch (error) {
       console.error('Error loading entries:', error);
       toast.error('Girişler yüklenirken hata oluştu');
@@ -62,9 +79,21 @@ export function useJournal(userId: string | undefined) {
     setIsAnalyzing(true);
     
     try {
-      // Call AI emotion analysis
+      // Get historical entries for context
+      const historicalEntries = entries.map(e => ({
+        primary_emotion: e.emotion?.primaryEmotion || 'neutral',
+        intensity: e.emotion?.intensity || 5,
+        triggers: e.emotion?.triggers || [],
+        created_at: e.createdAt.toISOString()
+      }));
+
+      // Call AI emotion analysis with historical context
       const { data, error } = await supabase.functions.invoke('analyze-emotion', {
-        body: { text: content }
+        body: { 
+          text: content,
+          historicalEntries,
+          recentSuggestions: recentSuggestionsRef.current
+        }
       });
 
       if (error) {
@@ -72,11 +101,16 @@ export function useJournal(userId: string | undefined) {
         throw new Error(error.message);
       }
 
+      const aiResponse = data as AIAnalysisResponse;
+      
       const analysis: EmotionAnalysis = {
-        primaryEmotion: data.primaryEmotion as Emotion,
-        intensity: data.intensity,
-        triggers: data.triggers || []
+        primaryEmotion: aiResponse.primaryEmotion as Emotion,
+        intensity: aiResponse.intensity,
+        triggers: aiResponse.triggers || []
       };
+
+      // Use AI-generated suggestions
+      const suggestions: Suggestion[] = aiResponse.suggestions || getRandomSuggestions(analysis.primaryEmotion, 3);
 
       // Save to database with user_id
       const { data: savedEntry, error: saveError } = await supabase
@@ -93,8 +127,6 @@ export function useJournal(userId: string | undefined) {
 
       if (saveError) throw saveError;
 
-      const suggestions = getRandomSuggestions(analysis.primaryEmotion, 3);
-      
       const newEntry: JournalEntry = {
         id: savedEntry.id,
         content,
@@ -103,8 +135,21 @@ export function useJournal(userId: string | undefined) {
         suggestions,
       };
       
+      // Update recent suggestions tracking
+      const newSuggestionTitles = suggestions.map(s => s.title);
+      recentSuggestionsRef.current = [...newSuggestionTitles, ...recentSuggestionsRef.current].slice(0, 30);
+      
       setEntries(prev => [newEntry, ...prev]);
       setCurrentAnalysis(analysis);
+      
+      // Set insights if available
+      if (aiResponse.weeklyInsight || aiResponse.monthlyInsight) {
+        setCurrentInsights({
+          weekly: aiResponse.weeklyInsight,
+          monthly: aiResponse.monthlyInsight
+        });
+      }
+      
       setIsAnalyzing(false);
       
       return newEntry;
@@ -156,7 +201,7 @@ export function useJournal(userId: string | undefined) {
       
       return newEntry;
     }
-  }, [userId]);
+  }, [userId, entries]);
 
   const deleteEntry = useCallback(async (id: string) => {
     try {
@@ -177,11 +222,13 @@ export function useJournal(userId: string | undefined) {
 
   const clearCurrentAnalysis = useCallback(() => {
     setCurrentAnalysis(null);
+    setCurrentInsights(null);
   }, []);
 
   return {
     entries,
     currentAnalysis,
+    currentInsights,
     isAnalyzing,
     isLoading,
     addEntry,
