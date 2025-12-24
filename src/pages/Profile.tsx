@@ -13,6 +13,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { Emotion } from '@/types/journal';
+import { AnalyzingAnimation } from '@/components/journal/AnalyzingAnimation';
 
 const sectionIcons: Record<string, React.ReactNode> = {
   music: <Music className="w-5 h-5" />,
@@ -876,7 +877,9 @@ export default function Profile() {
                               </Button>
                             </div>
                             
-                            {savedAnalyses.length === 0 ? (
+                            {aiAnalysisLoading ? (
+                              <AnalyzingAnimation />
+                            ) : savedAnalyses.length === 0 ? (
                               <div className="text-center py-8 bg-muted/30 rounded-xl border border-dashed border-border">
                                 <Sparkles className="w-12 h-12 text-primary/50 mx-auto mb-4" />
                                 <p className="text-muted-foreground mb-2">
