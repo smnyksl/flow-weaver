@@ -10,6 +10,7 @@ import { EmotionCalendar } from '@/components/journal/EmotionCalendar';
 import { RewardsPanel } from '@/components/journal/RewardsPanel';
 import { EntryDetailModal } from '@/components/journal/EntryDetailModal';
 import { ExportDataModal } from '@/components/journal/ExportDataModal';
+import { AnalyzingAnimation } from '@/components/journal/AnalyzingAnimation';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useJournal } from '@/hooks/useJournal';
 import { useRewards } from '@/hooks/useRewards';
@@ -92,7 +93,12 @@ const Index = () => {
           <div className="container mx-auto px-4 py-4 max-w-lg">
             <TabsContent value="journal" className="mt-0 space-y-4">
               <JournalInput onSubmit={handleSubmit} isAnalyzing={isAnalyzing} />
-              {currentAnalysis && (
+              
+              {/* Show analyzing animation while processing */}
+              {isAnalyzing && <AnalyzingAnimation />}
+              
+              {/* Show results after analysis */}
+              {!isAnalyzing && currentAnalysis && (
                 <div className="space-y-4">
                   <EmotionDisplay analysis={currentAnalysis} />
                   {currentInsights && (
