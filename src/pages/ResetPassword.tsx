@@ -42,7 +42,7 @@ export default function ResetPassword() {
       toast.error('Şifre güncellenirken bir hata oluştu');
     } else {
       toast.success('Şifreniz başarıyla güncellendi');
-      navigate('/');
+      navigate('/app');
     }
   };
 
