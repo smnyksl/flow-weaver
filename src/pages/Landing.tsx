@@ -3,6 +3,9 @@ import { useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Brain, Heart, TrendingUp, Sparkles, Shield, BarChart3, ArrowRight, CheckCircle2, Star, Zap } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import moodCharacter from '@/assets/illustrations/mood-character.png';
+import journalCharacter from '@/assets/illustrations/journal-character.png';
+import celebrateCharacter from '@/assets/illustrations/celebrate-character.png';
 
 const features = [
   {
@@ -321,6 +324,73 @@ export default function Landing() {
               </div>
             </div>
           </AnimatedSection>
+        </div>
+      </section>
+
+      {/* Illustration Section */}
+      <section className="py-16 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+        <div className="max-w-6xl mx-auto">
+          <AnimatedSection className="text-center mb-12">
+            <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
+              Duygularınla{' '}
+              <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                Tanış
+              </span>
+            </h2>
+          </AnimatedSection>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <AnimatedSection delay={100}>
+              <div className="group text-center p-6 rounded-3xl bg-gradient-to-b from-primary/5 to-transparent border border-border/30 hover:border-primary/30 transition-all duration-500 hover:-translate-y-2">
+                <div className="relative mb-6">
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-accent/20 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  <img 
+                    src={moodCharacter} 
+                    alt="Duygu takibi" 
+                    className="w-48 h-48 mx-auto object-contain relative z-10 group-hover:scale-110 transition-transform duration-500"
+                  />
+                </div>
+                <h3 className="text-xl font-bold text-foreground mb-2">Duygu Takibi</h3>
+                <p className="text-muted-foreground text-sm">
+                  Günlük duygularını kaydet ve değişimlerini gör
+                </p>
+              </div>
+            </AnimatedSection>
+            
+            <AnimatedSection delay={200}>
+              <div className="group text-center p-6 rounded-3xl bg-gradient-to-b from-accent/5 to-transparent border border-border/30 hover:border-accent/30 transition-all duration-500 hover:-translate-y-2">
+                <div className="relative mb-6">
+                  <div className="absolute inset-0 bg-gradient-to-br from-accent/20 to-purple-500/20 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  <img 
+                    src={journalCharacter} 
+                    alt="Günlük yazma" 
+                    className="w-48 h-48 mx-auto object-contain relative z-10 group-hover:scale-110 transition-transform duration-500"
+                  />
+                </div>
+                <h3 className="text-xl font-bold text-foreground mb-2">Günlük Yaz</h3>
+                <p className="text-muted-foreground text-sm">
+                  Düşüncelerini ve hislerini özgürce paylaş
+                </p>
+              </div>
+            </AnimatedSection>
+            
+            <AnimatedSection delay={300}>
+              <div className="group text-center p-6 rounded-3xl bg-gradient-to-b from-purple-500/5 to-transparent border border-border/30 hover:border-purple-500/30 transition-all duration-500 hover:-translate-y-2">
+                <div className="relative mb-6">
+                  <div className="absolute inset-0 bg-gradient-to-br from-purple-500/20 to-primary/20 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  <img 
+                    src={celebrateCharacter} 
+                    alt="Başarıları kutla" 
+                    className="w-48 h-48 mx-auto object-contain relative z-10 group-hover:scale-110 transition-transform duration-500"
+                  />
+                </div>
+                <h3 className="text-xl font-bold text-foreground mb-2">Başarılarını Kutla</h3>
+                <p className="text-muted-foreground text-sm">
+                  Rozetler kazan ve ilerlemenle gurur duy
+                </p>
+              </div>
+            </AnimatedSection>
+          </div>
         </div>
       </section>
 
