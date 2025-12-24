@@ -1,4 +1,4 @@
-import { BookHeart, LogOut, Download, MoreVertical } from 'lucide-react';
+import { BookHeart, LogOut, Download, MoreVertical, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -50,6 +50,10 @@ export function AppHeader({ onExportClick }: AppHeaderProps) {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={() => navigate('/profile')}>
+                <User className="w-4 h-4 mr-2" />
+                Profil & Tercihler
+              </DropdownMenuItem>
               <DropdownMenuItem onClick={onExportClick}>
                 <Download className="w-4 h-4 mr-2" />
                 Verileri Dışa Aktar
