@@ -187,6 +187,7 @@ serve(async (req) => {
 
     console.log('Analyzing emotion for text:', text.substring(0, 100) + '...');
     console.log('Historical entries count:', historicalEntries?.length || 0);
+    console.log('User preferences received:', JSON.stringify(userPreferences));
 
     // Analyze historical data
     const now = new Date();
@@ -249,13 +250,17 @@ DİL VE ÜSLUP KURALLARI (ÇOK ÖNEMLİ):
   * "Aktivite gerçekleştirmeniz tavsiye edilmektedir"
   * "Duygusal durumunuz değerlendirilmiştir"
 
-KİŞİSELLEŞTİRME KURALLARI:
+KİŞİSELLEŞTİRME KURALLARI (ZORUNLU):
 - Öneriler MUTLAKA kullanıcının profil bilgilerine göre kişiselleştirilmeli
-${userPreferences?.hobbies?.length > 0 ? '- Kullanıcının hobilerini önerilere dahil et' : ''}
-${userPreferences?.musicGenres?.length > 0 ? '- Müzik önerilerinde kullanıcının sevdiği türleri kullan' : ''}
-${userPreferences?.personalityType === 'introvert' ? '- Kullanıcı içe dönük, yalnız yapabileceği aktiviteler öner' : ''}
-${userPreferences?.personalityType === 'extrovert' ? '- Kullanıcı dışa dönük, sosyal aktiviteler öner' : ''}
-${userPreferences?.emotionalGoals?.length > 0 ? '- Öneriler kullanıcının duygusal hedeflerine yönelik olmalı' : ''}
+${userPreferences?.hobbies?.length > 0 ? `- ZORUNLU: Kullanıcı şu hobileri seviyor: ${userPreferences.hobbies.join(', ')}. Bu hobileri önerilerde MUTLAKA kullan! Örneğin kitap okumayı seviyorsa "sevdiğin bir kitabı aç", müzik dinlemeyi seviyorsa "en sevdiğin şarkıyı aç" gibi.` : ''}
+${userPreferences?.musicGenres?.length > 0 ? `- ZORUNLU: Kullanıcı şu müzik türlerini seviyor: ${userPreferences.musicGenres.join(', ')}. Müzik önerisi yaparken bu türlerden bahset!` : ''}
+${userPreferences?.personalityType === 'introvert' ? '- ZORUNLU: Kullanıcı İÇE DÖNÜK! Sadece yalnız yapabileceği, sakin aktiviteler öner. Sosyal aktiviteler ÖNERİSİN!' : ''}
+${userPreferences?.personalityType === 'extrovert' ? '- ZORUNLU: Kullanıcı DIŞA DÖNÜK! Sosyal aktiviteler, arkadaşlarla yapılacak şeyler öner.' : ''}
+${userPreferences?.emotionalGoals?.length > 0 ? `- ZORUNLU: Kullanıcının hedefleri: ${userPreferences.emotionalGoals.join(', ')}. Öneriler bu hedeflere yönelik olmalı!` : ''}
+${userPreferences?.exerciseFrequency === 'daily' || userPreferences?.exerciseFrequency === 'weekly' ? '- Kullanıcı düzenli egzersiz yapıyor, fiziksel aktivite önerisi verebilirsin.' : ''}
+${userPreferences?.exerciseFrequency === 'rarely' || userPreferences?.exerciseFrequency === 'none' ? '- Kullanıcı pek egzersiz yapmıyor, çok ağır fiziksel aktiviteler önerme, hafif başla.' : ''}
+${userPreferences?.meditationExperience === 'experienced' ? '- Kullanıcı meditasyon konusunda deneyimli, gelişmiş teknikler önerebilirsin.' : ''}
+${userPreferences?.meditationExperience === 'none' ? '- Kullanıcı meditasyona yeni, basit nefes egzersizleri öner.' : ''}
 - Son verilen önerileri TEKRARLAMA, farklı öneriler ver
 - ${monthlyAnalysis.isDecreasing ? 'UYARI: Kullanıcının durumu kötüye gidiyor! Nazikçe ama ciddiyetle uzun vadeli çözümler öner.' : ''}
 
