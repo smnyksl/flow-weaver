@@ -3,9 +3,9 @@ import { useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Brain, Heart, TrendingUp, Sparkles, Shield, BarChart3, ArrowRight, CheckCircle2, Star, Zap } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import moodCharacter from '@/assets/illustrations/mood-character.png';
-import journalCharacter from '@/assets/illustrations/journal-character.png';
-import celebrateCharacter from '@/assets/illustrations/celebrate-character.png';
+import characterMood from '@/assets/illustrations/character-mood.png';
+import characterJournal from '@/assets/illustrations/character-journal.png';
+import characterCelebrate from '@/assets/illustrations/character-celebrate.png';
 
 const features = [
   {
@@ -345,8 +345,8 @@ export default function Landing() {
                 <div className="relative mb-6">
                   <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-accent/20 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                   <img 
-                    src={moodCharacter} 
-                    alt="Duygu takibi" 
+                    src={characterMood} 
+                    alt="Duygu takibi"
                     className="w-48 h-48 mx-auto object-contain relative z-10 group-hover:scale-110 transition-transform duration-500"
                   />
                 </div>
@@ -362,8 +362,8 @@ export default function Landing() {
                 <div className="relative mb-6">
                   <div className="absolute inset-0 bg-gradient-to-br from-accent/20 to-purple-500/20 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                   <img 
-                    src={journalCharacter} 
-                    alt="Günlük yazma" 
+                    src={characterJournal} 
+                    alt="Günlük yazma"
                     className="w-48 h-48 mx-auto object-contain relative z-10 group-hover:scale-110 transition-transform duration-500"
                   />
                 </div>
@@ -379,8 +379,8 @@ export default function Landing() {
                 <div className="relative mb-6">
                   <div className="absolute inset-0 bg-gradient-to-br from-purple-500/20 to-primary/20 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                   <img 
-                    src={celebrateCharacter} 
-                    alt="Başarıları kutla" 
+                    src={characterCelebrate} 
+                    alt="Başarıları kutla"
                     className="w-48 h-48 mx-auto object-contain relative z-10 group-hover:scale-110 transition-transform duration-500"
                   />
                 </div>
