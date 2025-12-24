@@ -14,6 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      ai_analyses: {
+        Row: {
+          created_at: string
+          emotional_journey: string
+          id: string
+          pattern_insights: string
+          trigger_analysis: string
+          user_id: string
+          weekly_narrative: string
+          wellbeing_summary: string
+        }
+        Insert: {
+          created_at?: string
+          emotional_journey: string
+          id?: string
+          pattern_insights: string
+          trigger_analysis: string
+          user_id: string
+          weekly_narrative: string
+          wellbeing_summary: string
+        }
+        Update: {
+          created_at?: string
+          emotional_journey?: string
+          id?: string
+          pattern_insights?: string
+          trigger_analysis?: string
+          user_id?: string
+          weekly_narrative?: string
+          wellbeing_summary?: string
+        }
+        Relationships: []
+      }
       journal_entries: {
         Row: {
           content: string
