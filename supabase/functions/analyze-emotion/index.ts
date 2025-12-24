@@ -250,17 +250,49 @@ DİL VE ÜSLUP KURALLARI (ÇOK ÖNEMLİ):
   * "Aktivite gerçekleştirmeniz tavsiye edilmektedir"
   * "Duygusal durumunuz değerlendirilmiştir"
 
-KİŞİSELLEŞTİRME KURALLARI (ZORUNLU):
-- Öneriler MUTLAKA kullanıcının profil bilgilerine göre kişiselleştirilmeli
-${userPreferences?.hobbies?.length > 0 ? `- ZORUNLU: Kullanıcı şu hobileri seviyor: ${userPreferences.hobbies.join(', ')}. Bu hobileri önerilerde MUTLAKA kullan! Örneğin kitap okumayı seviyorsa "sevdiğin bir kitabı aç", müzik dinlemeyi seviyorsa "en sevdiğin şarkıyı aç" gibi.` : ''}
-${userPreferences?.musicGenres?.length > 0 ? `- ZORUNLU: Kullanıcı şu müzik türlerini seviyor: ${userPreferences.musicGenres.join(', ')}. Müzik önerisi yaparken bu türlerden bahset!` : ''}
-${userPreferences?.personalityType === 'introvert' ? '- ZORUNLU: Kullanıcı İÇE DÖNÜK! Sadece yalnız yapabileceği, sakin aktiviteler öner. Sosyal aktiviteler ÖNERİSİN!' : ''}
-${userPreferences?.personalityType === 'extrovert' ? '- ZORUNLU: Kullanıcı DIŞA DÖNÜK! Sosyal aktiviteler, arkadaşlarla yapılacak şeyler öner.' : ''}
-${userPreferences?.emotionalGoals?.length > 0 ? `- ZORUNLU: Kullanıcının hedefleri: ${userPreferences.emotionalGoals.join(', ')}. Öneriler bu hedeflere yönelik olmalı!` : ''}
-${userPreferences?.exerciseFrequency === 'daily' || userPreferences?.exerciseFrequency === 'weekly' ? '- Kullanıcı düzenli egzersiz yapıyor, fiziksel aktivite önerisi verebilirsin.' : ''}
-${userPreferences?.exerciseFrequency === 'rarely' || userPreferences?.exerciseFrequency === 'none' ? '- Kullanıcı pek egzersiz yapmıyor, çok ağır fiziksel aktiviteler önerme, hafif başla.' : ''}
-${userPreferences?.meditationExperience === 'experienced' ? '- Kullanıcı meditasyon konusunda deneyimli, gelişmiş teknikler önerebilirsin.' : ''}
-${userPreferences?.meditationExperience === 'none' ? '- Kullanıcı meditasyona yeni, basit nefes egzersizleri öner.' : ''}
+KİŞİSELLEŞTİRME KURALLARI (ZORUNLU - ÇOK ÖNEMLİ):
+- Öneriler MUTLAKA SPESİFİK olmalı! Genel öneriler YASAK!
+- "Sevdiğin bir şarkı dinle" YASAK! Bunun yerine gerçek şarkı/sanatçı ismi ver!
+- "Bir kitap oku" YASAK! Bunun yerine gerçek kitap adı ve yazarı ver!
+- "Film izle" YASAK! Bunun yerine gerçek film adı ver!
+
+${userPreferences?.musicGenres?.length > 0 ? `MÜZİK TERCİHLERİ: ${userPreferences.musicGenres.join(', ')}
+- Bu türlerden SPESİFİK şarkı/sanatçı öner! Örnek:
+  * Pop seviyorsa: "Hadi Tarkan'ın 'Kuzu Kuzu'sunu aç, dans et biraz! 💃"
+  * Rock seviyorsa: "Mor ve Ötesi'nin 'Cambaz'ını aç, gitar sololarına kendini bırak!"
+  * Klasik seviyorsa: "Chopin'in Nocturne'lerini aç, gözlerini kapat ve hisset"
+  * Jazz seviyorsa: "Miles Davis'in 'Kind of Blue' albümünü aç, kahve eşliğinde dinle"
+  * Türk müziği seviyorsa: "Zeki Müren'den 'Gitme Sana Muhtacım' dinle, içini dök"` : ''}
+
+${userPreferences?.hobbies?.includes('reading') ? `KİTAP OKUMAK: Kullanıcı kitap okuyor!
+- SPESİFİK kitap öner! Örnek:
+  * Üzgünse: "Paulo Coelho'nun 'Simyacı'sını aç, ilham verici olacak"
+  * Kaygılıysa: "Eckhart Tolle'un 'Şimdi'nin Gücü' kitabını oku, rahatlatıcı"
+  * Mutluysa: "Aziz Nesin'in hikayelerini oku, kahkaha at!"` : ''}
+
+${userPreferences?.hobbies?.includes('movies') ? `FİLM/DİZİ SEVİYOR:
+- SPESİFİK film/dizi öner! Örnek:
+  * Üzgünse: "Yeşil Yol filmini izle, duygularını akıt"
+  * Kaygılıysa: "Amelie'yi izle, içini ısıtacak bir film"
+  * Öfkeliyse: "Masumiyet veya Ayla gibi duygusal bir film seni sakinleştirebilir"
+  * Mutluysa: "Hababam Sınıfı aç, gül biraz!"` : ''}
+
+${userPreferences?.hobbies?.includes('gaming') ? `OYUN OYNUYOR:
+- Rahatlatıcı oyun öner: "Stardew Valley oyna, sakin bir çiftlik hayatı seni rahatlatır" veya "Minecraft'ta inşa yap, yaratıcılığını kullan"` : ''}
+
+${userPreferences?.hobbies?.includes('cooking') ? `YEMEK YAPMAYI SEVİYOR:
+- SPESİFİK tarif öner: "Hadi güzel bir brownie yap, çikolata terapisi!" veya "Sıcak bir çorba yap, mutfağın kokusu bile rahatlatır"` : ''}
+
+${userPreferences?.hobbies?.includes('nature') ? `DOĞA YÜRÜYÜŞÜ SEVİYOR:
+- "Yakındaki bir parkta 15 dakika yürü, ağaçları izle" gibi spesifik öneriler ver` : ''}
+
+${userPreferences?.personalityType === 'introvert' ? '- Kullanıcı İÇE DÖNÜK! Yalnız yapabileceği aktiviteler öner, sosyal aktiviteler YASAK!' : ''}
+${userPreferences?.personalityType === 'extrovert' ? '- Kullanıcı DIŞA DÖNÜK! Arkadaşlarla yapılacak aktiviteler öner.' : ''}
+${userPreferences?.emotionalGoals?.length > 0 ? `- Kullanıcının hedefleri: ${userPreferences.emotionalGoals.join(', ')}. Öneriler bu hedeflere yönelik olmalı!` : ''}
+${userPreferences?.exerciseFrequency === 'daily' || userPreferences?.exerciseFrequency === 'weekly' ? '- Kullanıcı düzenli egzersiz yapıyor, fiziksel aktivite önerebilirsin.' : ''}
+${userPreferences?.exerciseFrequency === 'rarely' || userPreferences?.exerciseFrequency === 'none' ? '- Kullanıcı pek egzersiz yapmıyor, ağır fiziksel aktiviteler önerme.' : ''}
+${userPreferences?.meditationExperience === 'experienced' ? '- Meditasyon deneyimli, gelişmiş teknikler önerebilirsin.' : ''}
+${userPreferences?.meditationExperience === 'none' ? '- Meditasyona yeni, basit nefes egzersizleri öner.' : ''}
 - Son verilen önerileri TEKRARLAMA, farklı öneriler ver
 - ${monthlyAnalysis.isDecreasing ? 'UYARI: Kullanıcının durumu kötüye gidiyor! Nazikçe ama ciddiyetle uzun vadeli çözümler öner.' : ''}
 
