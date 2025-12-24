@@ -46,6 +46,15 @@ interface EmotionStats {
   percentage: number;
 }
 
+interface WeeklyData {
+  weekNumber: number;
+  weekLabel: string;
+  entries: number;
+  avgIntensity: number;
+  dominantEmotion: string;
+  score: number;
+}
+
 interface WeeklyReport {
   totalEntries: number;
   avgIntensity: number;
@@ -60,10 +69,18 @@ interface MonthlyReport {
   avgIntensity: number;
   dominantEmotion: string;
   emotionBreakdown: EmotionStats[];
-  topTriggers: string[];
+  topTriggers: { trigger: string; count: number }[];
   weeklyComparison: number;
   trend: 'up' | 'down' | 'stable';
   trendMessage: string;
+  weekByWeekData: WeeklyData[];
+  positiveRatio: number;
+  negativeRatio: number;
+  neutralRatio: number;
+  mostActiveDay: string;
+  avgEntriesPerWeek: number;
+  longestPositiveStreak: number;
+  recommendations: string[];
 }
 
 export default function Profile() {
@@ -153,7 +170,78 @@ export default function Profile() {
         const topTriggers = Object.entries(triggerCounts)
           .sort((a, b) => b[1] - a[1])
           .slice(0, 5)
-          .map(([trigger]) => trigger);
+          .map(([trigger, count]) => ({ trigger, count }));
+
+        // Week by week analysis
+        const weekByWeekData: WeeklyData[] = [];
+        const dayLabels = ['Pazar', 'Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi'];
+        
+        for (let i = 0; i < 4; i++) {
+          const weekStart = new Date(now.getTime() - (i + 1) * 7 * 24 * 60 * 60 * 1000);
+          const weekEnd = new Date(now.getTime() - i * 7 * 24 * 60 * 60 * 1000);
+          const weekEntries = typedEntries.filter(e => {
+            const d = new Date(e.created_at);
+            return d >= weekStart && d < weekEnd;
+          });
+          
+          if (weekEntries.length > 0) {
+            const weekBreakdown = calculateEmotionBreakdown(weekEntries);
+            weekByWeekData.push({
+              weekNumber: 4 - i,
+              weekLabel: i === 0 ? 'Bu Hafta' : i === 1 ? 'Geçen Hafta' : `${4 - i}. Hafta`,
+              entries: weekEntries.length,
+              avgIntensity: weekEntries.reduce((sum, e) => sum + e.intensity, 0) / weekEntries.length,
+              dominantEmotion: weekBreakdown[0]?.emotion || 'neutral',
+              score: calculateEmotionScore(weekEntries),
+            });
+          }
+        }
+
+        // Calculate positive/negative/neutral ratios
+        const positiveEmotions = ['happy', 'excited', 'calm'];
+        const negativeEmotions = ['sad', 'anxious', 'angry'];
+        const positiveCount = typedEntries.filter(e => positiveEmotions.includes(e.primary_emotion)).length;
+        const negativeCount = typedEntries.filter(e => negativeEmotions.includes(e.primary_emotion)).length;
+        const neutralCount = typedEntries.filter(e => e.primary_emotion === 'neutral').length;
+
+        // Find most active day
+        const dayCounts: Record<number, number> = {};
+        typedEntries.forEach(e => {
+          const day = new Date(e.created_at).getDay();
+          dayCounts[day] = (dayCounts[day] || 0) + 1;
+        });
+        const mostActiveDay = dayLabels[Number(Object.entries(dayCounts).sort((a, b) => b[1] - a[1])[0]?.[0]) || 0];
+
+        // Calculate longest positive streak
+        let longestStreak = 0;
+        let currentStreak = 0;
+        const sortedEntries = [...typedEntries].sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+        sortedEntries.forEach(e => {
+          if (positiveEmotions.includes(e.primary_emotion)) {
+            currentStreak++;
+            longestStreak = Math.max(longestStreak, currentStreak);
+          } else {
+            currentStreak = 0;
+          }
+        });
+
+        // Generate recommendations
+        const recommendations: string[] = [];
+        if (negativeCount / typedEntries.length > 0.5) {
+          recommendations.push('Negatif duygularının oranı yüksek. Profesyonel destek almayı düşünebilirsin.');
+        }
+        if (topTriggers.length > 0 && topTriggers[0].count >= 3) {
+          recommendations.push(`"${topTriggers[0].trigger}" sık tekrarlayan bir tetikleyici. Bu konuyu ele almak faydalı olabilir.`);
+        }
+        if (weekByWeekData.length >= 2 && weekByWeekData[0].score < weekByWeekData[1].score - 0.5) {
+          recommendations.push('Son hafta önceki haftaya göre daha zorlu geçmiş. Kendine ekstra özen göster.');
+        }
+        if (positiveCount / typedEntries.length > 0.6) {
+          recommendations.push('Pozitif duyguların ağırlıkta! Böyle devam et, harika gidiyorsun! 🌟');
+        }
+        if (typedEntries.length < 7) {
+          recommendations.push('Daha fazla günlük girişi yapmak, duygularını daha iyi anlamamıza yardımcı olur.');
+        }
 
         const firstHalf = typedEntries.slice(Math.floor(typedEntries.length / 2));
         const secondHalf = typedEntries.slice(0, Math.floor(typedEntries.length / 2));
@@ -174,6 +262,14 @@ export default function Profile() {
             : monthlyTrend === 'down' 
             ? 'Son dönemde zorlu bir süreçten geçiyor olabilirsin. Profesyonel destek almayı düşünebilirsin 💜' 
             : 'Aylık duygusal dengen stabil görünüyor 🌊',
+          weekByWeekData: weekByWeekData.reverse(),
+          positiveRatio: (positiveCount / typedEntries.length) * 100,
+          negativeRatio: (negativeCount / typedEntries.length) * 100,
+          neutralRatio: (neutralCount / typedEntries.length) * 100,
+          mostActiveDay,
+          avgEntriesPerWeek: typedEntries.length / 4,
+          longestPositiveStreak: longestStreak,
+          recommendations,
         });
       } else {
         setMonthlyReport(null);
@@ -451,24 +547,99 @@ export default function Profile() {
                           <p className="text-sm font-medium">{monthlyReport.trendMessage}</p>
                         </div>
 
-                        {/* Stats */}
-                        <div className="grid grid-cols-3 gap-3">
-                          <div className="bg-muted/50 rounded-xl p-3 text-center">
-                            <p className="text-2xl font-bold text-primary">{monthlyReport.totalEntries}</p>
-                            <p className="text-xs text-muted-foreground">Toplam Giriş</p>
+                        {/* Main Stats Grid */}
+                        <div className="grid grid-cols-2 gap-3">
+                          <div className="bg-gradient-to-br from-primary/10 to-primary/5 rounded-xl p-4 text-center border border-primary/20">
+                            <p className="text-3xl font-bold text-primary">{monthlyReport.totalEntries}</p>
+                            <p className="text-xs text-muted-foreground mt-1">Toplam Giriş</p>
                           </div>
-                          <div className="bg-muted/50 rounded-xl p-3 text-center">
-                            <p className="text-2xl font-bold text-accent">{monthlyReport.avgIntensity.toFixed(1)}</p>
-                            <p className="text-xs text-muted-foreground">Ort. Yoğunluk</p>
+                          <div className="bg-gradient-to-br from-accent/10 to-accent/5 rounded-xl p-4 text-center border border-accent/20">
+                            <p className="text-3xl font-bold text-accent">{monthlyReport.avgIntensity.toFixed(1)}</p>
+                            <p className="text-xs text-muted-foreground mt-1">Ort. Yoğunluk</p>
                           </div>
-                          <div className="bg-muted/50 rounded-xl p-3 text-center">
-                            <p className={cn(
-                              'text-2xl font-bold',
-                              monthlyReport.weeklyComparison > 0 ? 'text-green-600' : monthlyReport.weeklyComparison < 0 ? 'text-orange-600' : 'text-muted-foreground'
-                            )}>
-                              {monthlyReport.weeklyComparison > 0 ? '+' : ''}{monthlyReport.weeklyComparison}
-                            </p>
-                            <p className="text-xs text-muted-foreground">Haftalık Fark</p>
+                        </div>
+
+                        {/* Emotion Ratio Bar */}
+                        <div className="space-y-2">
+                          <p className="text-sm font-medium text-muted-foreground">Duygu Oranları</p>
+                          <div className="flex h-4 rounded-full overflow-hidden">
+                            <div 
+                              className="bg-green-500 transition-all" 
+                              style={{ width: `${monthlyReport.positiveRatio}%` }}
+                              title={`Pozitif: ${monthlyReport.positiveRatio.toFixed(0)}%`}
+                            />
+                            <div 
+                              className="bg-gray-400 transition-all" 
+                              style={{ width: `${monthlyReport.neutralRatio}%` }}
+                              title={`Nötr: ${monthlyReport.neutralRatio.toFixed(0)}%`}
+                            />
+                            <div 
+                              className="bg-orange-500 transition-all" 
+                              style={{ width: `${monthlyReport.negativeRatio}%` }}
+                              title={`Negatif: ${monthlyReport.negativeRatio.toFixed(0)}%`}
+                            />
+                          </div>
+                          <div className="flex justify-between text-xs text-muted-foreground">
+                            <span className="flex items-center gap-1">
+                              <span className="w-2 h-2 rounded-full bg-green-500" />
+                              Pozitif {monthlyReport.positiveRatio.toFixed(0)}%
+                            </span>
+                            <span className="flex items-center gap-1">
+                              <span className="w-2 h-2 rounded-full bg-gray-400" />
+                              Nötr {monthlyReport.neutralRatio.toFixed(0)}%
+                            </span>
+                            <span className="flex items-center gap-1">
+                              <span className="w-2 h-2 rounded-full bg-orange-500" />
+                              Negatif {monthlyReport.negativeRatio.toFixed(0)}%
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Week by Week Analysis */}
+                        {monthlyReport.weekByWeekData.length > 0 && (
+                          <div className="space-y-3">
+                            <p className="text-sm font-medium text-muted-foreground">Haftalık Karşılaştırma</p>
+                            <div className="space-y-2">
+                              {monthlyReport.weekByWeekData.map((week) => (
+                                <div 
+                                  key={week.weekNumber}
+                                  className="flex items-center gap-3 p-3 bg-muted/30 rounded-lg"
+                                >
+                                  <div className="w-20 text-sm font-medium">{week.weekLabel}</div>
+                                  <div className="flex-1">
+                                    <div className="flex items-center gap-2">
+                                      <span className="text-lg">{emotionLabels[week.dominantEmotion]?.emoji || '😐'}</span>
+                                      <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
+                                        <div 
+                                          className={cn(
+                                            'h-full rounded-full transition-all',
+                                            week.score > 0.5 ? 'bg-green-500' : week.score < -0.5 ? 'bg-orange-500' : 'bg-blue-500'
+                                          )}
+                                          style={{ width: `${Math.min(100, Math.max(20, (week.score + 2) * 25))}%` }}
+                                        />
+                                      </div>
+                                      <span className="text-xs text-muted-foreground w-8">{week.entries}</span>
+                                    </div>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Additional Stats */}
+                        <div className="grid grid-cols-3 gap-2">
+                          <div className="bg-muted/50 rounded-lg p-3 text-center">
+                            <p className="text-lg font-bold text-foreground">{monthlyReport.mostActiveDay}</p>
+                            <p className="text-[10px] text-muted-foreground">En Aktif Gün</p>
+                          </div>
+                          <div className="bg-muted/50 rounded-lg p-3 text-center">
+                            <p className="text-lg font-bold text-foreground">{monthlyReport.avgEntriesPerWeek.toFixed(1)}</p>
+                            <p className="text-[10px] text-muted-foreground">Haftalık Ort.</p>
+                          </div>
+                          <div className="bg-muted/50 rounded-lg p-3 text-center">
+                            <p className="text-lg font-bold text-green-600">{monthlyReport.longestPositiveStreak}</p>
+                            <p className="text-[10px] text-muted-foreground">Pozitif Seri</p>
                           </div>
                         </div>
 
@@ -477,12 +648,15 @@ export default function Profile() {
                           <div className="space-y-2">
                             <p className="text-sm font-medium text-muted-foreground">En Sık Tetikleyiciler</p>
                             <div className="flex flex-wrap gap-2">
-                              {monthlyReport.topTriggers.map((trigger, i) => (
+                              {monthlyReport.topTriggers.map((item, i) => (
                                 <span 
                                   key={i} 
-                                  className="px-3 py-1.5 bg-accent/10 text-accent rounded-full text-sm font-medium"
+                                  className={cn(
+                                    'px-3 py-1.5 rounded-full text-sm font-medium',
+                                    i === 0 ? 'bg-orange-500/20 text-orange-700 dark:text-orange-300' : 'bg-accent/10 text-accent'
+                                  )}
                                 >
-                                  {trigger}
+                                  {item.trigger} ({item.count})
                                 </span>
                               ))}
                             </div>
@@ -505,6 +679,24 @@ export default function Profile() {
                             </div>
                           ))}
                         </div>
+
+                        {/* Recommendations */}
+                        {monthlyReport.recommendations.length > 0 && (
+                          <div className="space-y-3 p-4 bg-gradient-to-br from-primary/5 to-accent/5 rounded-xl border border-primary/10">
+                            <p className="text-sm font-semibold text-foreground flex items-center gap-2">
+                              <Target className="w-4 h-4 text-primary" />
+                              Öneriler ve İçgörüler
+                            </p>
+                            <ul className="space-y-2">
+                              {monthlyReport.recommendations.map((rec, i) => (
+                                <li key={i} className="flex items-start gap-2 text-sm text-muted-foreground">
+                                  <span className="text-primary mt-0.5">•</span>
+                                  <span>{rec}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
                       </div>
                     ) : (
                       <div className="text-center py-8">
