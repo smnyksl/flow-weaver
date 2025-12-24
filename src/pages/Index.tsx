@@ -14,6 +14,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useJournal } from '@/hooks/useJournal';
 import { useRewards } from '@/hooks/useRewards';
 import { useAuth } from '@/hooks/useAuth';
+import { usePreferences } from '@/hooks/usePreferences';
 import { toast } from 'sonner';
 import { Suggestion, JournalEntry } from '@/types/journal';
 import { BookOpen, History, Calendar, Trophy, Loader2 } from 'lucide-react';
@@ -21,7 +22,8 @@ import { BookOpen, History, Calendar, Trophy, Loader2 } from 'lucide-react';
 const Index = () => {
   const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
-  const { entries, currentAnalysis, currentInsights, isAnalyzing, isLoading, addEntry } = useJournal(user?.id);
+  const { preferences, loading: prefLoading } = usePreferences(user?.id);
+  const { entries, currentAnalysis, currentInsights, isAnalyzing, isLoading, addEntry } = useJournal(user?.id, preferences);
   const { achievements, stats, getProgress } = useRewards(entries, user?.id);
   const [latestSuggestions, setLatestSuggestions] = useState<Suggestion[]>([]);
   const [selectedEntry, setSelectedEntry] = useState<JournalEntry | null>(null);
@@ -30,8 +32,14 @@ const Index = () => {
   useEffect(() => {
     if (!authLoading && !user) {
       navigate('/auth');
+      return;
     }
-  }, [user, authLoading, navigate]);
+    
+    // Check if onboarding is completed
+    if (!authLoading && !prefLoading && user && preferences && !preferences.onboarding_completed) {
+      navigate('/onboarding');
+    }
+  }, [user, authLoading, prefLoading, preferences, navigate]);
 
   const handleSubmit = async (content: string) => {
     const entry = await addEntry(content);
@@ -44,7 +52,7 @@ const Index = () => {
     }
   };
 
-  if (authLoading || isLoading) {
+  if (authLoading || isLoading || prefLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />

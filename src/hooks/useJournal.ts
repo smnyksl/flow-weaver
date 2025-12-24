@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { JournalEntry, EmotionAnalysis, Emotion, Suggestion } from '@/types/journal';
+import { UserPreferences } from '@/types/preferences';
 import { getRandomSuggestions } from '@/data/emotionData';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -13,7 +14,7 @@ interface AIAnalysisResponse {
   monthlyInsight?: string;
 }
 
-export function useJournal(userId: string | undefined) {
+export function useJournal(userId: string | undefined, userPreferences?: UserPreferences | null) {
   const [entries, setEntries] = useState<JournalEntry[]>([]);
   const [currentAnalysis, setCurrentAnalysis] = useState<EmotionAnalysis | null>(null);
   const [currentInsights, setCurrentInsights] = useState<{ weekly?: string; monthly?: string } | null>(null);
@@ -87,12 +88,25 @@ export function useJournal(userId: string | undefined) {
         created_at: e.createdAt.toISOString()
       }));
 
-      // Call AI emotion analysis with historical context
+      // Prepare user preferences for AI
+      const preferences = userPreferences ? {
+        musicGenres: userPreferences.music_genres || [],
+        hobbies: userPreferences.hobbies || [],
+        sleepPattern: userPreferences.sleep_pattern,
+        exerciseFrequency: userPreferences.exercise_frequency,
+        personalityType: userPreferences.personality_type,
+        stressCoping: userPreferences.stress_coping || [],
+        meditationExperience: userPreferences.meditation_experience,
+        emotionalGoals: userPreferences.emotional_goals || []
+      } : null;
+
+      // Call AI emotion analysis with historical context and preferences
       const { data, error } = await supabase.functions.invoke('analyze-emotion', {
         body: { 
           text: content,
           historicalEntries,
-          recentSuggestions: recentSuggestionsRef.current
+          recentSuggestions: recentSuggestionsRef.current,
+          userPreferences: preferences
         }
       });
 
@@ -201,7 +215,7 @@ export function useJournal(userId: string | undefined) {
       
       return newEntry;
     }
-  }, [userId, entries]);
+  }, [userId, entries, userPreferences]);
 
   const deleteEntry = useCallback(async (id: string) => {
     try {
