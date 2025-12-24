@@ -122,6 +122,47 @@ export default function Profile() {
     }
   }, [user, authLoading, navigate]);
 
+  // Fetch saved AI analyses from database
+  useEffect(() => {
+    if (user) {
+      loadSavedAnalyses();
+    }
+  }, [user]);
+
+  const loadSavedAnalyses = async () => {
+    if (!user) return;
+    
+    try {
+      const { data, error } = await supabase
+        .from('ai_analyses')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Error loading analyses:', error);
+        return;
+      }
+
+      if (data) {
+        const analyses: SavedAnalysis[] = data.map(item => ({
+          id: item.id,
+          createdAt: new Date(item.created_at),
+          deepAnalysis: {
+            emotionalJourney: item.emotional_journey,
+            triggerAnalysis: item.trigger_analysis,
+            patternInsights: item.pattern_insights,
+            weeklyNarrative: item.weekly_narrative,
+            wellbeingSummary: item.wellbeing_summary
+          }
+        }));
+        setSavedAnalyses(analyses);
+      }
+    } catch (error) {
+      console.error('Error loading analyses:', error);
+    }
+  };
+
   // Fetch reports data
   useEffect(() => {
     if (user) {
@@ -364,14 +405,34 @@ export default function Profile() {
           return;
         }
 
+        // Save to database
+        const { data: savedData, error: saveError } = await supabase
+          .from('ai_analyses')
+          .insert({
+            user_id: user.id,
+            emotional_journey: analysis.emotionalJourney,
+            trigger_analysis: analysis.triggerAnalysis,
+            pattern_insights: analysis.patternInsights,
+            weekly_narrative: analysis.weeklyNarrative,
+            wellbeing_summary: analysis.wellbeingSummary
+          })
+          .select()
+          .single();
+
+        if (saveError) {
+          console.error('Error saving analysis:', saveError);
+          toast.error('Analiz kaydedilemedi');
+          return;
+        }
+
         // Add new analysis to saved analyses list
         const newAnalysis: SavedAnalysis = {
-          id: crypto.randomUUID(),
-          createdAt: new Date(),
+          id: savedData.id,
+          createdAt: new Date(savedData.created_at),
           deepAnalysis: analysis
         };
         setSavedAnalyses(prev => [newAnalysis, ...prev]);
-        toast.success('AI analizi oluşturuldu!');
+        toast.success('AI analizi oluşturuldu ve kaydedildi!');
       } else {
         toast.error('AI yanıtı alınamadı. Tekrar deneyin.');
       }
@@ -911,7 +972,21 @@ export default function Profile() {
                                           variant="ghost"
                                           size="sm"
                                           className="text-destructive hover:text-destructive hover:bg-destructive/10 gap-2"
-                                          onClick={() => setSavedAnalyses(prev => prev.filter(a => a.id !== analysis.id))}
+                                          onClick={async () => {
+                                            const { error } = await supabase
+                                              .from('ai_analyses')
+                                              .delete()
+                                              .eq('id', analysis.id);
+                                            
+                                            if (error) {
+                                              console.error('Error deleting analysis:', error);
+                                              toast.error('Analiz silinemedi');
+                                              return;
+                                            }
+                                            
+                                            setSavedAnalyses(prev => prev.filter(a => a.id !== analysis.id));
+                                            toast.success('Analiz silindi');
+                                          }}
                                         >
                                           <Trash2 className="w-4 h-4" />
                                           Bu Analizi Sil
