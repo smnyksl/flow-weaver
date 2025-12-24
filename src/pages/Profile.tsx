@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Save, User, Music, Gamepad2, Moon, Dumbbell, Brain, Target, Loader2, TrendingUp, TrendingDown, Minus, Calendar, BarChart3, Sparkles, RefreshCw } from 'lucide-react';
+import { ArrowLeft, Save, User, Music, Gamepad2, Moon, Dumbbell, Brain, Target, Loader2, TrendingUp, TrendingDown, Minus, Calendar, BarChart3, Sparkles, RefreshCw, ChevronDown, Clock, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { useAuth } from '@/hooks/useAuth';
 import { usePreferences } from '@/hooks/usePreferences';
 import { ONBOARDING_STEPS } from '@/types/preferences';
@@ -90,6 +91,18 @@ interface MonthlyReport {
   };
 }
 
+interface SavedAnalysis {
+  id: string;
+  createdAt: Date;
+  deepAnalysis: {
+    emotionalJourney: string;
+    triggerAnalysis: string;
+    patternInsights: string;
+    weeklyNarrative: string;
+    wellbeingSummary: string;
+  };
+}
+
 export default function Profile() {
   const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
@@ -101,7 +114,7 @@ export default function Profile() {
   const [monthlyReport, setMonthlyReport] = useState<MonthlyReport | null>(null);
   const [reportsLoading, setReportsLoading] = useState(true);
   const [aiAnalysisLoading, setAiAnalysisLoading] = useState(false);
-  const [hasAiAnalysis, setHasAiAnalysis] = useState(false);
+  const [savedAnalyses, setSavedAnalyses] = useState<SavedAnalysis[]>([]);
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -351,11 +364,13 @@ export default function Profile() {
           return;
         }
 
-        setMonthlyReport({
-          ...monthlyReport,
+        // Add new analysis to saved analyses list
+        const newAnalysis: SavedAnalysis = {
+          id: crypto.randomUUID(),
+          createdAt: new Date(),
           deepAnalysis: analysis
-        });
-        setHasAiAnalysis(true);
+        };
+        setSavedAnalyses(prev => [newAnalysis, ...prev]);
         toast.success('AI analizi oluşturuldu!');
       } else {
         toast.error('AI yanıtı alınamadı. Tekrar deneyin.');
@@ -774,6 +789,11 @@ export default function Profile() {
                               <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
                                 <Brain className="w-5 h-5 text-primary" />
                                 Derinlemesine Analiz
+                                {savedAnalyses.length > 0 && (
+                                  <span className="text-xs bg-primary/20 text-primary px-2 py-0.5 rounded-full">
+                                    {savedAnalyses.length} analiz
+                                  </span>
+                                )}
                               </h3>
                               <Button
                                 onClick={generateAiAnalysis}
@@ -786,21 +806,16 @@ export default function Profile() {
                                     <Loader2 className="w-4 h-4 animate-spin" />
                                     Analiz Ediliyor...
                                   </>
-                                ) : hasAiAnalysis ? (
-                                  <>
-                                    <RefreshCw className="w-4 h-4" />
-                                    Yeniden Oluştur
-                                  </>
                                 ) : (
                                   <>
                                     <Sparkles className="w-4 h-4" />
-                                    AI ile Analiz Et
+                                    {savedAnalyses.length > 0 ? 'Yeni Analiz Oluştur' : 'AI ile Analiz Et'}
                                   </>
                                 )}
                               </Button>
                             </div>
                             
-                            {!hasAiAnalysis ? (
+                            {savedAnalyses.length === 0 ? (
                               <div className="text-center py-8 bg-muted/30 rounded-xl border border-dashed border-border">
                                 <Sparkles className="w-12 h-12 text-primary/50 mx-auto mb-4" />
                                 <p className="text-muted-foreground mb-2">
@@ -811,57 +826,101 @@ export default function Profile() {
                                 </p>
                               </div>
                             ) : (
-                              <div className="space-y-4 mb-6">
-                                <div className="p-4 bg-gradient-to-br from-blue-500/5 to-purple-500/5 rounded-xl border border-blue-500/10">
-                                  <h4 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-2">
-                                    <TrendingUp className="w-4 h-4 text-blue-500" />
-                                    Duygusal Yolculuğun
-                                  </h4>
-                                  <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line">
-                                    {monthlyReport.deepAnalysis.emotionalJourney}
-                                  </p>
-                                </div>
-                                
-                                <div className="p-4 bg-gradient-to-br from-orange-500/5 to-red-500/5 rounded-xl border border-orange-500/10">
-                                  <h4 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-2">
-                                    <Target className="w-4 h-4 text-orange-500" />
-                                    Tetikleyici Analizi
-                                  </h4>
-                                  <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line">
-                                    {monthlyReport.deepAnalysis.triggerAnalysis}
-                                  </p>
-                                </div>
-                                
-                                <div className="p-4 bg-gradient-to-br from-green-500/5 to-teal-500/5 rounded-xl border border-green-500/10">
-                                  <h4 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-2">
-                                    <BarChart3 className="w-4 h-4 text-green-500" />
-                                    Duygu Örüntüleri
-                                  </h4>
-                                  <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line">
-                                    {monthlyReport.deepAnalysis.patternInsights}
-                                  </p>
-                                </div>
-                                
-                                <div className="p-4 bg-gradient-to-br from-purple-500/5 to-pink-500/5 rounded-xl border border-purple-500/10">
-                                  <h4 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-2">
-                                    <Calendar className="w-4 h-4 text-purple-500" />
-                                    Haftalık Seyir
-                                  </h4>
-                                  <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line">
-                                    {monthlyReport.deepAnalysis.weeklyNarrative}
-                                  </p>
-                                </div>
-                                
-                                <div className="p-4 bg-gradient-to-br from-primary/5 to-accent/5 rounded-xl border border-primary/10">
-                                  <h4 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-2">
-                                    <User className="w-4 h-4 text-primary" />
-                                    Genel İyilik Hali
-                                  </h4>
-                                  <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line">
-                                    {monthlyReport.deepAnalysis.wellbeingSummary}
-                                  </p>
-                                </div>
-                              </div>
+                              <Accordion type="single" collapsible className="space-y-3">
+                                {savedAnalyses.map((analysis, index) => (
+                                  <AccordionItem 
+                                    key={analysis.id} 
+                                    value={analysis.id}
+                                    className="border border-border rounded-xl overflow-hidden bg-card"
+                                  >
+                                    <AccordionTrigger className="px-4 py-3 hover:no-underline hover:bg-muted/50">
+                                      <div className="flex items-center gap-3 text-left">
+                                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center">
+                                          <Brain className="w-4 h-4 text-primary" />
+                                        </div>
+                                        <div>
+                                          <p className="font-medium text-foreground">
+                                            Analiz #{savedAnalyses.length - index}
+                                          </p>
+                                          <p className="text-xs text-muted-foreground flex items-center gap-1">
+                                            <Clock className="w-3 h-3" />
+                                            {analysis.createdAt.toLocaleDateString('tr-TR', {
+                                              day: 'numeric',
+                                              month: 'long',
+                                              year: 'numeric',
+                                              hour: '2-digit',
+                                              minute: '2-digit'
+                                            })}
+                                          </p>
+                                        </div>
+                                      </div>
+                                    </AccordionTrigger>
+                                    <AccordionContent className="px-4 pb-4">
+                                      <div className="space-y-4 pt-2">
+                                        <div className="p-4 bg-gradient-to-br from-blue-500/5 to-purple-500/5 rounded-xl border border-blue-500/10">
+                                          <h4 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-2">
+                                            <TrendingUp className="w-4 h-4 text-blue-500" />
+                                            Duygusal Yolculuğun
+                                          </h4>
+                                          <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line">
+                                            {analysis.deepAnalysis.emotionalJourney}
+                                          </p>
+                                        </div>
+                                        
+                                        <div className="p-4 bg-gradient-to-br from-orange-500/5 to-red-500/5 rounded-xl border border-orange-500/10">
+                                          <h4 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-2">
+                                            <Target className="w-4 h-4 text-orange-500" />
+                                            Tetikleyici Analizi
+                                          </h4>
+                                          <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line">
+                                            {analysis.deepAnalysis.triggerAnalysis}
+                                          </p>
+                                        </div>
+                                        
+                                        <div className="p-4 bg-gradient-to-br from-green-500/5 to-teal-500/5 rounded-xl border border-green-500/10">
+                                          <h4 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-2">
+                                            <BarChart3 className="w-4 h-4 text-green-500" />
+                                            Duygu Örüntüleri
+                                          </h4>
+                                          <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line">
+                                            {analysis.deepAnalysis.patternInsights}
+                                          </p>
+                                        </div>
+                                        
+                                        <div className="p-4 bg-gradient-to-br from-purple-500/5 to-pink-500/5 rounded-xl border border-purple-500/10">
+                                          <h4 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-2">
+                                            <Calendar className="w-4 h-4 text-purple-500" />
+                                            Haftalık Seyir
+                                          </h4>
+                                          <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line">
+                                            {analysis.deepAnalysis.weeklyNarrative}
+                                          </p>
+                                        </div>
+                                        
+                                        <div className="p-4 bg-gradient-to-br from-primary/5 to-accent/5 rounded-xl border border-primary/10">
+                                          <h4 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-2">
+                                            <User className="w-4 h-4 text-primary" />
+                                            Genel İyilik Hali
+                                          </h4>
+                                          <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line">
+                                            {analysis.deepAnalysis.wellbeingSummary}
+                                          </p>
+                                        </div>
+
+                                        <Button
+                                          variant="ghost"
+                                          size="sm"
+                                          className="text-destructive hover:text-destructive hover:bg-destructive/10 gap-2"
+                                          onClick={() => setSavedAnalyses(prev => prev.filter(a => a.id !== analysis.id))}
+                                        >
+                                          <Trash2 className="w-4 h-4" />
+                                          Bu Analizi Sil
+                                        </Button>
+                                      </div>
+                                    </AccordionContent>
+                                  </AccordionItem>
+                                ))}
+                              </Accordion>
                             )}
                           </div>
                         </div>
