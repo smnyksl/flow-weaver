@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Save, User, Music, Gamepad2, Moon, Dumbbell, Brain, Target, Loader2, TrendingUp, TrendingDown, Minus, Calendar, BarChart3 } from 'lucide-react';
+import { ArrowLeft, Save, User, Music, Gamepad2, Moon, Dumbbell, Brain, Target, Loader2, TrendingUp, TrendingDown, Minus, Calendar, BarChart3, Sparkles, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
@@ -100,6 +100,8 @@ export default function Profile() {
   const [weeklyReport, setWeeklyReport] = useState<WeeklyReport | null>(null);
   const [monthlyReport, setMonthlyReport] = useState<MonthlyReport | null>(null);
   const [reportsLoading, setReportsLoading] = useState(true);
+  const [aiAnalysisLoading, setAiAnalysisLoading] = useState(false);
+  const [hasAiAnalysis, setHasAiAnalysis] = useState(false);
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -258,112 +260,13 @@ export default function Profile() {
         const monthlyTrend = secondScore > firstScore + 0.3 ? 'up' : secondScore < firstScore - 0.3 ? 'down' : 'stable';
         const avgEntriesPerWeekCalc = typedEntries.length / 4;
 
-        // Generate deep analysis texts
-        const dominantEmotionLabel = emotionLabels[monthlyBreakdown[0]?.emotion]?.label || 'belirsiz';
-        const secondEmotionLabel = monthlyBreakdown[1] ? emotionLabels[monthlyBreakdown[1]?.emotion]?.label : null;
-        
-        // Emotional Journey Analysis
-        let emotionalJourney = '';
-        if (monthlyTrend === 'up') {
-          emotionalJourney = `Bu ay duygusal yolculuğunda belirgin bir iyileşme gözlemliyoruz. Ayın başında yaşadığın bazı zorlukların üstesinden gelmeyi başardın ve şu an çok daha iyi bir noktadasın. ${positiveCount > negativeCount ? `Pozitif duygularının negatif duygulara oranı ${(positiveCount / Math.max(1, negativeCount)).toFixed(1)} kat daha yüksek, bu da duygusal dayanıklılığının güçlendiğini gösteriyor.` : ''} Özellikle ${dominantEmotionLabel} duygusunun baskın olması, kendini genel olarak ${positiveEmotions.includes(monthlyBreakdown[0]?.emotion) ? 'iyi ve dengeli hissettiğini' : 'bazı zorluklarla başa çıkmaya çalıştığını'} gösteriyor. Bu ilerlemeyi sürdürmek için şu anki rutinlerini korumaya devam etmeni öneriyoruz.`;
-        } else if (monthlyTrend === 'down') {
-          emotionalJourney = `Bu ay duygusal olarak bazı zorluklarla karşılaştığını görüyoruz. ${negativeCount} negatif duygu kaydı ile ${positiveCount} pozitif duygu kaydı arasındaki fark, bu dönemin senin için kolay geçmediğini gösteriyor. Ancak unutma ki duygusal dalgalanmalar hayatın doğal bir parçası ve bu dönemleri fark etmek bile önemli bir adım. ${dominantEmotionLabel} duygusunun sık yaşanması, belki de hayatında değişen bazı koşulların etkisi olabilir. Kendine nazik davranmayı ve gerekirse destek almayı düşünmeni öneriyoruz.`;
-        } else {
-          emotionalJourney = `Bu ay duygusal açıdan dengeli bir seyir izledin. Ne aşırı iniş ne de aşırı çıkışlar yaşadın, bu da duygusal stabiliteni koruduğunu gösteriyor. ${dominantEmotionLabel} duygusunun ${monthlyBreakdown[0]?.percentage.toFixed(0)}% oranında baskın olması${secondEmotionLabel ? ` ve onu ${secondEmotionLabel} duygusunun takip etmesi` : ''}, genel ruh halinin tutarlı olduğunu ortaya koyuyor. Bu denge, stresle başa çıkma becerilerinin iyi çalıştığının bir göstergesi olabilir.`;
-        }
-
-        // Trigger Analysis
-        let triggerAnalysis = '';
-        if (topTriggers.length > 0) {
-          const primaryTrigger = topTriggers[0];
-          triggerAnalysis = `Duygusal tetikleyicilerini incelediğimizde, "${primaryTrigger.trigger}" konusunun ${primaryTrigger.count} kez tekrarlandığını görüyoruz. Bu, hayatında bu alanın önemli bir duygusal yük taşıdığını gösteriyor. `;
-          
-          if (topTriggers.length > 1) {
-            triggerAnalysis += `Bunu "${topTriggers[1].trigger}" (${topTriggers[1].count} kez) takip ediyor. `;
-          }
-          
-          if (primaryTrigger.count >= 5) {
-            triggerAnalysis += `Bu kadar sık tekrarlanan bir tetikleyici, üzerinde çalışılması gereken önemli bir alan olabilir. Bu konuyu bir terapist veya güvendiğin biriyle konuşmayı düşünebilirsin. Tetikleyicilerin farkında olmak, onlarla başa çıkmanın ilk adımıdır.`;
-          } else if (primaryTrigger.count >= 3) {
-            triggerAnalysis += `Bu tetikleyici henüz kritik seviyede olmasa da, takip etmeni öneririz. Hangi durumlarda bu tetikleyicinin ortaya çıktığını not etmek, gelecekte daha hazırlıklı olmanı sağlayabilir.`;
-          } else {
-            triggerAnalysis += `Tetikleyicilerin çeşitli olması, tek bir konuya takılı kalmadığını gösteriyor. Ancak yine de bu alanları gözlemlemeye devam etmeni öneririz.`;
-          }
-        } else {
-          triggerAnalysis = 'Bu ay belirgin bir duygusal tetikleyici tespit edemedik. Bu, ya duygularını tetikleyen durumları kaydetmediğin ya da genel olarak stabil bir dönem geçirdiğin anlamına gelebilir. Tetikleyicileri kaydetmek, duygusal örüntülerini anlamak için çok değerli bir araçtır.';
-        }
-
-        // Pattern Insights
-        let patternInsights = '';
-        patternInsights = `Duygu dağılımına baktığımızda, ${dominantEmotionLabel} duygusunun %${monthlyBreakdown[0]?.percentage.toFixed(0)} ile en yoğun yaşanan duygu olduğunu görüyoruz. `;
-        
-        if (monthlyBreakdown.length > 2) {
-          patternInsights += `Bunu sırasıyla ${emotionLabels[monthlyBreakdown[1]?.emotion]?.label || 'diğer'} (%${monthlyBreakdown[1]?.percentage.toFixed(0)}) ve ${emotionLabels[monthlyBreakdown[2]?.emotion]?.label || 'diğer'} (%${monthlyBreakdown[2]?.percentage.toFixed(0)}) takip ediyor. `;
-        }
-        
-        const emotionalVariety = monthlyBreakdown.length;
-        if (emotionalVariety >= 5) {
-          patternInsights += `${emotionalVariety} farklı duygu deneyimlemiş olman, zengin bir duygusal yaşantın olduğunu gösteriyor. Bu çeşitlilik, duygusal zekânın gelişmiş olduğunun bir işareti olabilir.`;
-        } else if (emotionalVariety >= 3) {
-          patternInsights += `${emotionalVariety} farklı duygu deneyimlemiş olman, normal bir duygusal çeşitlilik aralığında olduğunu gösteriyor.`;
-        } else {
-          patternInsights += `Sadece ${emotionalVariety} farklı duygu kaydetmiş olman, duygularını daha detaylı incelemeye değer olabilir. Belki de daha ince duygu ayrımları yapmayı deneyebilirsin.`;
-        }
-
-        // Weekly Narrative
-        let weeklyNarrative = '';
-        if (weekByWeekData.length >= 2) {
-          weeklyNarrative = 'Haftalık değişimlere baktığımızda: ';
-          weekByWeekData.forEach((week, index) => {
-            const weekEmotion = emotionLabels[week.dominantEmotion]?.label || 'belirsiz';
-            if (index === 0) {
-              weeklyNarrative += `İlk hafta ${week.entries} giriş ile ${weekEmotion} duygusu baskındı. `;
-            } else {
-              const prevWeek = weekByWeekData[index - 1];
-              const change = week.score - prevWeek.score;
-              if (change > 0.5) {
-                weeklyNarrative += `${week.weekLabel}da belirgin bir iyileşme görüldü ve ${weekEmotion} duygusu öne çıktı. `;
-              } else if (change < -0.5) {
-                weeklyNarrative += `${week.weekLabel}da duygusal bir düşüş yaşandı, ${weekEmotion} duygusu baskın hale geldi. `;
-              } else {
-                weeklyNarrative += `${week.weekLabel}da benzer bir seyir devam etti. `;
-              }
-            }
-          });
-          
-          if (weekByWeekData.length >= 4) {
-            const firstHalfAvg = (weekByWeekData[0].score + weekByWeekData[1].score) / 2;
-            const secondHalfAvg = (weekByWeekData[2].score + weekByWeekData[3].score) / 2;
-            if (secondHalfAvg > firstHalfAvg + 0.3) {
-              weeklyNarrative += 'Ayın ikinci yarısı ilk yarısına göre daha pozitif geçti.';
-            } else if (secondHalfAvg < firstHalfAvg - 0.3) {
-              weeklyNarrative += 'Ayın ilk yarısı ikinci yarısına göre daha iyi geçti, son haftalarda biraz zorlanmış olabilirsin.';
-            } else {
-              weeklyNarrative += 'Ay boyunca genel bir tutarlılık gözlemlendi.';
-            }
-          }
-        } else {
-          weeklyNarrative = 'Haftalık karşılaştırma yapabilmek için en az 2 haftalık veri gerekiyor. Düzenli günlük tutmaya devam et!';
-        }
-
-        // Wellbeing Summary
-        let wellbeingSummary = '';
-        const wellbeingScore = (positiveCount * 2 + neutralCount * 1 - negativeCount * 1.5) / typedEntries.length;
-        
-        if (wellbeingScore > 1) {
-          wellbeingSummary = `Genel iyilik halin bu ay oldukça yüksek görünüyor! ${longestStreak > 3 ? `${longestStreak} günlük pozitif serinin de bunu destekliyor.` : ''} ${mostActiveDay} günleri en çok giriş yaptığın günler, bu da belki de bu günlerde daha fazla düşünmeye ve kendini ifade etmeye zaman ayırdığını gösteriyor. Haftada ortalama ${avgEntriesPerWeekCalc.toFixed(1)} giriş yapman, duygusal farkındalığına özen gösterdiğinin güzel bir işareti.`;
-        } else if (wellbeingScore > 0) {
-          wellbeingSummary = `Bu ay genel olarak dengeli bir iyilik hali sergiliyorsun. Pozitif ve negatif deneyimler arasında makul bir denge var. ${mostActiveDay} günleri en aktif olduğun günler. ${avgEntriesPerWeekCalc >= 3 ? 'Düzenli günlük tutma alışkanlığın, duygusal sağlığın için olumlu bir adım.' : 'Daha düzenli giriş yapmak, duygusal farkındalığını artırabilir.'}`;
-        } else {
-          wellbeingSummary = `Bu ay zorlu bir dönem geçirdiğin görülüyor. Negatif duygular pozitif duygulara göre daha baskın olmuş. Bu tamamen normal ve herkesin zaman zaman böyle dönemleri olur. Önemli olan bu duyguların farkında olman ve gerektiğinde destek aramaktan çekinmemen. ${longestStreak > 0 ? `En azından ${longestStreak} günlük bir pozitif serin olduğunu unutma!` : ''} Kendine karşı nazik ol ve küçük adımlarla ilerle.`;
-        }
-
+        // Default placeholder deep analysis - will be replaced by AI
         const deepAnalysis = {
-          emotionalJourney,
-          triggerAnalysis,
-          patternInsights,
-          weeklyNarrative,
-          wellbeingSummary,
+          emotionalJourney: 'AI analizi için butona tıklayın.',
+          triggerAnalysis: 'AI analizi için butona tıklayın.',
+          patternInsights: 'AI analizi için butona tıklayın.',
+          weeklyNarrative: 'AI analizi için butona tıklayın.',
+          wellbeingSummary: 'AI analizi için butona tıklayın.',
         };
 
         setMonthlyReport({
@@ -396,6 +299,53 @@ export default function Profile() {
       console.error('Error fetching reports:', error);
     } finally {
       setReportsLoading(false);
+    }
+  };
+
+  const generateAiAnalysis = async () => {
+    if (!monthlyReport) return;
+    
+    setAiAnalysisLoading(true);
+    try {
+      const reportData = {
+        entries: [],
+        totalEntries: monthlyReport.totalEntries,
+        dominantEmotion: monthlyReport.dominantEmotion,
+        emotionBreakdown: monthlyReport.emotionBreakdown,
+        topTriggers: monthlyReport.topTriggers,
+        positiveRatio: monthlyReport.positiveRatio,
+        negativeRatio: monthlyReport.negativeRatio,
+        neutralRatio: monthlyReport.neutralRatio,
+        trend: monthlyReport.trend,
+        longestPositiveStreak: monthlyReport.longestPositiveStreak,
+        avgEntriesPerWeek: monthlyReport.avgEntriesPerWeek,
+        mostActiveDay: monthlyReport.mostActiveDay,
+        weekByWeekData: monthlyReport.weekByWeekData,
+      };
+
+      const { data, error } = await supabase.functions.invoke('generate-monthly-report', {
+        body: { reportData }
+      });
+
+      if (error) {
+        console.error('AI analysis error:', error);
+        toast.error('AI analizi oluşturulurken hata oluştu');
+        return;
+      }
+
+      if (data?.analysis) {
+        setMonthlyReport({
+          ...monthlyReport,
+          deepAnalysis: data.analysis
+        });
+        setHasAiAnalysis(true);
+        toast.success('AI analizi oluşturuldu!');
+      }
+    } catch (error) {
+      console.error('Error generating AI analysis:', error);
+      toast.error('AI analizi oluşturulurken hata oluştu');
+    } finally {
+      setAiAnalysisLoading(false);
     }
   };
 
@@ -801,67 +751,99 @@ export default function Profile() {
                         {/* Deep Analysis Section */}
                         <div className="space-y-6">
                           <div className="border-t border-border pt-6">
-                            <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
-                              <Brain className="w-5 h-5 text-primary" />
-                              Derinlemesine Analiz
-                            </h3>
-                            
-                            {/* Emotional Journey */}
-                            <div className="space-y-4 mb-6">
-                              <div className="p-4 bg-gradient-to-br from-blue-500/5 to-purple-500/5 rounded-xl border border-blue-500/10">
-                                <h4 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-2">
-                                  <TrendingUp className="w-4 h-4 text-blue-500" />
-                                  Duygusal Yolculuğun
-                                </h4>
-                                <p className="text-sm text-muted-foreground leading-relaxed">
-                                  {monthlyReport.deepAnalysis.emotionalJourney}
-                                </p>
-                              </div>
-                              
-                              {/* Trigger Analysis */}
-                              <div className="p-4 bg-gradient-to-br from-orange-500/5 to-red-500/5 rounded-xl border border-orange-500/10">
-                                <h4 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-2">
-                                  <Target className="w-4 h-4 text-orange-500" />
-                                  Tetikleyici Analizi
-                                </h4>
-                                <p className="text-sm text-muted-foreground leading-relaxed">
-                                  {monthlyReport.deepAnalysis.triggerAnalysis}
-                                </p>
-                              </div>
-                              
-                              {/* Pattern Insights */}
-                              <div className="p-4 bg-gradient-to-br from-green-500/5 to-teal-500/5 rounded-xl border border-green-500/10">
-                                <h4 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-2">
-                                  <BarChart3 className="w-4 h-4 text-green-500" />
-                                  Duygu Örüntüleri
-                                </h4>
-                                <p className="text-sm text-muted-foreground leading-relaxed">
-                                  {monthlyReport.deepAnalysis.patternInsights}
-                                </p>
-                              </div>
-                              
-                              {/* Weekly Narrative */}
-                              <div className="p-4 bg-gradient-to-br from-purple-500/5 to-pink-500/5 rounded-xl border border-purple-500/10">
-                                <h4 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-2">
-                                  <Calendar className="w-4 h-4 text-purple-500" />
-                                  Haftalık Seyir
-                                </h4>
-                                <p className="text-sm text-muted-foreground leading-relaxed">
-                                  {monthlyReport.deepAnalysis.weeklyNarrative}
-                                </p>
-                              </div>
-                              
-                              {/* Wellbeing Summary */}
-                              <div className="p-4 bg-gradient-to-br from-primary/5 to-accent/5 rounded-xl border border-primary/10">
-                                <h4 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-2">
-                                  <User className="w-4 h-4 text-primary" />
-                                  Genel İyilik Hali
-                                </h4>
-                                <p className="text-sm text-muted-foreground leading-relaxed">
-                                  {monthlyReport.deepAnalysis.wellbeingSummary}
-                                </p>
-                              </div>
+                            <div className="flex items-center justify-between mb-4">
+                              <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
+                                <Brain className="w-5 h-5 text-primary" />
+                                Derinlemesine Analiz
+                              </h3>
+                              <Button
+                                onClick={generateAiAnalysis}
+                                disabled={aiAnalysisLoading}
+                                size="sm"
+                                className="gap-2"
+                              >
+                                {aiAnalysisLoading ? (
+                                  <>
+                                    <Loader2 className="w-4 h-4 animate-spin" />
+                                    Analiz Ediliyor...
+                                  </>
+                                ) : hasAiAnalysis ? (
+                                  <>
+                                    <RefreshCw className="w-4 h-4" />
+                                    Yeniden Oluştur
+                                  </>
+                                ) : (
+                                  <>
+                                    <Sparkles className="w-4 h-4" />
+                                    AI ile Analiz Et
+                                  </>
+                                )}
+                              </Button>
                             </div>
+                            
+                            {!hasAiAnalysis ? (
+                              <div className="text-center py-8 bg-muted/30 rounded-xl border border-dashed border-border">
+                                <Sparkles className="w-12 h-12 text-primary/50 mx-auto mb-4" />
+                                <p className="text-muted-foreground mb-2">
+                                  Kişiselleştirilmiş AI analizi için butona tıklayın
+                                </p>
+                                <p className="text-sm text-muted-foreground">
+                                  Verilerinize dayanarak derinlemesine içgörüler oluşturulacak
+                                </p>
+                              </div>
+                            ) : (
+                              <div className="space-y-4 mb-6">
+                                <div className="p-4 bg-gradient-to-br from-blue-500/5 to-purple-500/5 rounded-xl border border-blue-500/10">
+                                  <h4 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-2">
+                                    <TrendingUp className="w-4 h-4 text-blue-500" />
+                                    Duygusal Yolculuğun
+                                  </h4>
+                                  <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line">
+                                    {monthlyReport.deepAnalysis.emotionalJourney}
+                                  </p>
+                                </div>
+                                
+                                <div className="p-4 bg-gradient-to-br from-orange-500/5 to-red-500/5 rounded-xl border border-orange-500/10">
+                                  <h4 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-2">
+                                    <Target className="w-4 h-4 text-orange-500" />
+                                    Tetikleyici Analizi
+                                  </h4>
+                                  <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line">
+                                    {monthlyReport.deepAnalysis.triggerAnalysis}
+                                  </p>
+                                </div>
+                                
+                                <div className="p-4 bg-gradient-to-br from-green-500/5 to-teal-500/5 rounded-xl border border-green-500/10">
+                                  <h4 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-2">
+                                    <BarChart3 className="w-4 h-4 text-green-500" />
+                                    Duygu Örüntüleri
+                                  </h4>
+                                  <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line">
+                                    {monthlyReport.deepAnalysis.patternInsights}
+                                  </p>
+                                </div>
+                                
+                                <div className="p-4 bg-gradient-to-br from-purple-500/5 to-pink-500/5 rounded-xl border border-purple-500/10">
+                                  <h4 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-2">
+                                    <Calendar className="w-4 h-4 text-purple-500" />
+                                    Haftalık Seyir
+                                  </h4>
+                                  <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line">
+                                    {monthlyReport.deepAnalysis.weeklyNarrative}
+                                  </p>
+                                </div>
+                                
+                                <div className="p-4 bg-gradient-to-br from-primary/5 to-accent/5 rounded-xl border border-primary/10">
+                                  <h4 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-2">
+                                    <User className="w-4 h-4 text-primary" />
+                                    Genel İyilik Hali
+                                  </h4>
+                                  <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line">
+                                    {monthlyReport.deepAnalysis.wellbeingSummary}
+                                  </p>
+                                </div>
+                              </div>
+                            )}
                           </div>
                         </div>
 
