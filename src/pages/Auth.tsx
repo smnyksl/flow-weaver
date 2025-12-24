@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
 import { useAuth } from '@/hooks/useAuth';
-import { Heart, Loader2, ArrowLeft } from 'lucide-react';
+import { Heart, Loader2, ArrowLeft, Mail, CheckCircle2 } from 'lucide-react';
 import { z } from 'zod';
 
 const authSchema = z.object({
@@ -20,6 +20,8 @@ export default function Auth() {
   const navigate = useNavigate();
   const { user, loading, signUp, signIn, resetPassword } = useAuth();
   const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [showEmailConfirmation, setShowEmailConfirmation] = useState(false);
+  const [registeredEmail, setRegisteredEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
@@ -73,8 +75,8 @@ export default function Auth() {
         toast.error('Kayıt sırasında bir hata oluştu');
       }
     } else {
-      toast.success('Kayıt başarılı! Giriş yapabilirsiniz.');
-      navigate('/app');
+      setRegisteredEmail(formData.email);
+      setShowEmailConfirmation(true);
     }
   };
 
@@ -89,6 +91,8 @@ export default function Auth() {
     if (error) {
       if (error.message.includes('Invalid login')) {
         toast.error('E-posta veya şifre hatalı');
+      } else if (error.message.includes('Email not confirmed')) {
+        toast.error('E-posta adresinizi doğrulamanız gerekiyor. Lütfen gelen kutunuzu kontrol edin.');
       } else {
         toast.error('Giriş sırasında bir hata oluştu');
       }
@@ -119,7 +123,15 @@ export default function Auth() {
           <p className="text-muted-foreground">Duygularını yazarak keşfet</p>
         </div>
 
-        {showForgotPassword ? (
+        {showEmailConfirmation ? (
+          <EmailConfirmationCard 
+            email={registeredEmail} 
+            onBack={() => {
+              setShowEmailConfirmation(false);
+              setFormData({ email: '', password: '', displayName: '' });
+            }}
+          />
+        ) : showForgotPassword ? (
           <ForgotPasswordForm
             onBack={() => setShowForgotPassword(false)}
             onSubmit={async (email) => {
@@ -239,6 +251,52 @@ export default function Auth() {
         )}
       </div>
     </div>
+  );
+}
+
+function EmailConfirmationCard({ 
+  email, 
+  onBack 
+}: { 
+  email: string; 
+  onBack: () => void;
+}) {
+  return (
+    <Card className="border-border/50 bg-card/50 backdrop-blur">
+      <CardHeader className="text-center pb-2">
+        <div className="mx-auto mb-4 p-4 rounded-full bg-primary/20">
+          <Mail className="h-8 w-8 text-primary" />
+        </div>
+        <CardTitle className="text-xl">E-postanızı Doğrulayın</CardTitle>
+        <CardDescription className="text-base">
+          <span className="font-medium text-foreground">{email}</span> adresine bir doğrulama linki gönderdik.
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div className="bg-muted/50 rounded-lg p-4 space-y-2">
+          <div className="flex items-start gap-3">
+            <CheckCircle2 className="h-5 w-5 text-primary mt-0.5 shrink-0" />
+            <p className="text-sm text-muted-foreground">
+              E-postanızdaki linke tıklayarak hesabınızı aktif edin
+            </p>
+          </div>
+          <div className="flex items-start gap-3">
+            <CheckCircle2 className="h-5 w-5 text-primary mt-0.5 shrink-0" />
+            <p className="text-sm text-muted-foreground">
+              Spam/gereksiz klasörünü de kontrol etmeyi unutmayın
+            </p>
+          </div>
+        </div>
+        <Button 
+          variant="outline" 
+          className="w-full" 
+          onClick={onBack}
+        >
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Giriş Sayfasına Dön
+        </Button>
+      </CardContent>
+    </Card>
   );
 }
 
