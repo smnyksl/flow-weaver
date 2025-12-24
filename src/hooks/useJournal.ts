@@ -78,7 +78,6 @@ export function useJournal(userId: string | undefined, userPreferences?: UserPre
     }
     
     setIsAnalyzing(true);
-    console.log('Starting analysis - isAnalyzing set to true');
     
     try {
       // Get historical entries for context
