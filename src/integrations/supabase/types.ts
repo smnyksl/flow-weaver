@@ -86,6 +86,54 @@ export type Database = {
         }
         Relationships: []
       }
+      user_preferences: {
+        Row: {
+          created_at: string
+          emotional_goals: string[] | null
+          exercise_frequency: string | null
+          hobbies: string[] | null
+          id: string
+          meditation_experience: string | null
+          music_genres: string[] | null
+          onboarding_completed: boolean | null
+          personality_type: string | null
+          sleep_pattern: string | null
+          stress_coping: string[] | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          emotional_goals?: string[] | null
+          exercise_frequency?: string | null
+          hobbies?: string[] | null
+          id?: string
+          meditation_experience?: string | null
+          music_genres?: string[] | null
+          onboarding_completed?: boolean | null
+          personality_type?: string | null
+          sleep_pattern?: string | null
+          stress_coping?: string[] | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          emotional_goals?: string[] | null
+          exercise_frequency?: string | null
+          hobbies?: string[] | null
+          id?: string
+          meditation_experience?: string | null
+          music_genres?: string[] | null
+          onboarding_completed?: boolean | null
+          personality_type?: string | null
+          sleep_pattern?: string | null
+          stress_coping?: string[] | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_stats: {
         Row: {
           id: string

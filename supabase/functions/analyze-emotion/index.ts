@@ -12,6 +12,76 @@ interface HistoricalEntry {
   created_at: string;
 }
 
+interface UserPreferences {
+  musicGenres: string[];
+  hobbies: string[];
+  sleepPattern: string | null;
+  exerciseFrequency: string | null;
+  personalityType: string | null;
+  stressCoping: string[];
+  meditationExperience: string | null;
+  emotionalGoals: string[];
+}
+
+const PREFERENCE_LABELS: Record<string, Record<string, string>> = {
+  musicGenres: {
+    pop: 'Pop müzik', rock: 'Rock', classical: 'Klasik müzik', jazz: 'Caz',
+    hiphop: 'Hip Hop', electronic: 'Elektronik', turkish: 'Türk müziği', ambient: 'Ambient'
+  },
+  hobbies: {
+    reading: 'Kitap okumak', sports: 'Spor', gaming: 'Oyun oynamak', cooking: 'Yemek yapmak',
+    music: 'Müzik dinlemek', nature: 'Doğa yürüyüşü', art: 'Sanat/El işi', movies: 'Film/Dizi'
+  },
+  sleepPattern: {
+    early_bird: 'Erken yatan erken kalkan', night_owl: 'Gece kuşu', irregular: 'Düzensiz', normal: 'Normal'
+  },
+  exerciseFrequency: {
+    daily: 'Her gün', weekly: 'Haftada birkaç kez', rarely: 'Nadiren', none: 'Hiç'
+  },
+  personalityType: {
+    introvert: 'İçe dönük', extrovert: 'Dışa dönük', ambivert: 'İkisi arası'
+  },
+  emotionalGoals: {
+    reduce_anxiety: 'Kaygıyı azaltmak', improve_sleep: 'Uyku kalitesini artırmak',
+    boost_confidence: 'Özgüveni artırmak', manage_anger: 'Öfke kontrolü',
+    find_happiness: 'Mutluluğu bulmak', reduce_stress: 'Stresi azaltmak'
+  }
+};
+
+function buildPreferencesContext(prefs: UserPreferences | null): string {
+  if (!prefs) return "";
+  
+  const lines: string[] = [];
+  
+  if (prefs.musicGenres?.length > 0) {
+    const labels = prefs.musicGenres.map(g => PREFERENCE_LABELS.musicGenres[g] || g);
+    lines.push(`Sevdiği müzik: ${labels.join(', ')}`);
+  }
+  
+  if (prefs.hobbies?.length > 0) {
+    const labels = prefs.hobbies.map(h => PREFERENCE_LABELS.hobbies[h] || h);
+    lines.push(`Hobileri: ${labels.join(', ')}`);
+  }
+  
+  if (prefs.sleepPattern) {
+    lines.push(`Uyku düzeni: ${PREFERENCE_LABELS.sleepPattern[prefs.sleepPattern] || prefs.sleepPattern}`);
+  }
+  
+  if (prefs.exerciseFrequency) {
+    lines.push(`Egzersiz sıklığı: ${PREFERENCE_LABELS.exerciseFrequency[prefs.exerciseFrequency] || prefs.exerciseFrequency}`);
+  }
+  
+  if (prefs.personalityType) {
+    lines.push(`Kişilik: ${PREFERENCE_LABELS.personalityType[prefs.personalityType] || prefs.personalityType}`);
+  }
+  
+  if (prefs.emotionalGoals?.length > 0) {
+    const labels = prefs.emotionalGoals.map(g => PREFERENCE_LABELS.emotionalGoals[g] || g);
+    lines.push(`Duygusal hedefler: ${labels.join(', ')}`);
+  }
+  
+  return lines.length > 0 ? `KULLANICI PROFİLİ:\n${lines.join('\n')}` : "";
+}
 function analyzeWeeklyTrend(entries: HistoricalEntry[]): string {
   if (entries.length === 0) return "Henüz yeterli veri yok.";
   
@@ -104,7 +174,7 @@ serve(async (req) => {
   }
 
   try {
-    const { text, historicalEntries, recentSuggestions } = await req.json();
+    const { text, historicalEntries, recentSuggestions, userPreferences } = await req.json();
     
     if (!text || typeof text !== 'string') {
       throw new Error('Text is required');
@@ -133,12 +203,15 @@ serve(async (req) => {
     const weeklyAnalysis = analyzeWeeklyTrend(weeklyEntries);
     const monthlyAnalysis = analyzeMonthlyTrend(monthlyEntries);
     const usedSuggestions = getUsedSuggestionTypes(recentSuggestions || []);
-
+    const preferencesContext = buildPreferencesContext(userPreferences || null);
     // Build context for AI
     let contextPrompt = "";
+    if (preferencesContext) {
+      contextPrompt += preferencesContext + "\n\n";
+    }
+    
     if (weeklyEntries.length > 0 || monthlyEntries.length > 0) {
-      contextPrompt = `
-KULLANICI GEÇMİŞİ:
+      contextPrompt += `KULLANICI GEÇMİŞİ:
 - ${weeklyAnalysis}
 - ${monthlyAnalysis.trend} ${monthlyAnalysis.details}
 
@@ -158,10 +231,15 @@ Analiz etmen gerekenler:
 4. suggestions: 3 adet KİŞİSELLEŞTİRİLMİŞ öneri. Her öneri şunları içermeli:
    - type: "activity" | "breathing" | "motivation"
    - title: Kısa başlık
-   - description: Detaylı açıklama (kullanıcının durumuna özel)
+   - description: Detaylı açıklama (kullanıcının durumuna ve tercihlerine özel)
 
 ÖNEMLİ KURALLAR:
-- Öneriler MUTLAKA kullanıcının mevcut durumuna ve geçmişine göre kişiselleştirilmeli
+- Öneriler MUTLAKA kullanıcının profil bilgilerine (hobiler, müzik tercihleri, kişilik tipi, hedefler) göre kişiselleştirilmeli
+${userPreferences?.hobbies?.length > 0 ? '- Kullanıcının hobilerini önerilere dahil et (örn: kitap okumayı seviyorsa kitap öner, müzik seviyorsa müzik öner)' : ''}
+${userPreferences?.musicGenres?.length > 0 ? '- Müzik önerilerinde kullanıcının sevdiği türleri kullan' : ''}
+${userPreferences?.personalityType === 'introvert' ? '- Kullanıcı içe dönük, yalnız yapabileceği aktiviteler öner' : ''}
+${userPreferences?.personalityType === 'extrovert' ? '- Kullanıcı dışa dönük, sosyal aktiviteler öner' : ''}
+${userPreferences?.emotionalGoals?.length > 0 ? '- Öneriler kullanıcının duygusal hedeflerine yönelik olmalı' : ''}
 - Son verilen önerileri TEKRARLAMA, farklı öneriler ver
 - ${monthlyAnalysis.isDecreasing ? 'UYARI: Kullanıcının durumu kötüye gidiyor! Uzun vadeli çözümler ve profesyonel destek önerileri sun.' : ''}
 - Öneriler somut ve uygulanabilir olmalı
