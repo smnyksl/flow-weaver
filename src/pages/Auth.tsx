@@ -30,7 +30,7 @@ export default function Auth() {
 
   useEffect(() => {
     if (!loading && user) {
-      navigate('/');
+      navigate('/app');
     }
   }, [user, loading, navigate]);
 
@@ -74,7 +74,7 @@ export default function Auth() {
       }
     } else {
       toast.success('Kayıt başarılı! Giriş yapabilirsiniz.');
-      navigate('/');
+      navigate('/app');
     }
   };
 
@@ -94,7 +94,7 @@ export default function Auth() {
       }
     } else {
       toast.success('Giriş başarılı!');
-      navigate('/');
+      navigate('/app');
     }
   };
 

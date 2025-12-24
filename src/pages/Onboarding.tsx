@@ -27,7 +27,7 @@ export default function Onboarding() {
 
   useEffect(() => {
     if (preferences?.onboarding_completed) {
-      navigate('/');
+      navigate('/app');
     }
   }, [preferences, navigate]);
 
@@ -66,7 +66,7 @@ export default function Onboarding() {
       await completeOnboarding();
       
       toast.success('Hoş geldin! Artık sana özel tavsiyeler alabilirsin.');
-      navigate('/');
+      navigate('/app');
     } catch (error) {
       console.error('Error saving preferences:', error);
       toast.error('Bir hata oluştu, tekrar dene.');
@@ -80,7 +80,7 @@ export default function Onboarding() {
     try {
       await completeOnboarding();
       toast.info('Tercihleri daha sonra ayarlardan güncelleyebilirsin.');
-      navigate('/');
+      navigate('/app');
     } catch (error) {
       toast.error('Bir hata oluştu.');
     } finally {
