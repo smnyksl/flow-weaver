@@ -324,6 +324,78 @@ export default function Landing() {
         </div>
       </section>
 
+      {/* Emotional Importance Section */}
+      <section className="py-24 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-muted/20 via-transparent to-muted/20" />
+        <div className="max-w-6xl mx-auto relative">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+            {/* Left - Big Typography */}
+            <AnimatedSection>
+              <div className="space-y-6">
+                <p className="text-sm uppercase tracking-widest text-primary font-semibold">
+                  Duygusal Farkındalık
+                </p>
+                <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground leading-tight">
+                  Duygularını anlamak,
+                  <br />
+                  <span className="bg-gradient-to-r from-primary via-accent to-purple-500 bg-clip-text text-transparent">
+                    hayatını anlamaktır.
+                  </span>
+                </h2>
+              </div>
+            </AnimatedSection>
+
+            {/* Right - Impactful statements */}
+            <div className="space-y-8">
+              <AnimatedSection delay={100}>
+                <div className="group">
+                  <span className="text-7xl sm:text-8xl font-black bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                    %90
+                  </span>
+                  <p className="text-lg text-muted-foreground mt-2 group-hover:text-foreground transition-colors">
+                    kararlarımız duygularımızla şekillenir
+                  </p>
+                </div>
+              </AnimatedSection>
+
+              <AnimatedSection delay={200}>
+                <div className="group">
+                  <span className="text-5xl sm:text-6xl font-bold text-foreground">
+                    Fark et.{" "}
+                    <span className="bg-gradient-to-r from-accent to-primary bg-clip-text text-transparent">
+                      Anla.
+                    </span>{" "}
+                    Dönüştür.
+                  </span>
+                </div>
+              </AnimatedSection>
+
+              <AnimatedSection delay={300}>
+                <p className="text-xl text-muted-foreground leading-relaxed">
+                  Her duygu bir{" "}
+                  <span className="text-foreground font-semibold">mesaj</span> taşır.
+                  <br />
+                  Dinlemeyi öğren.
+                </p>
+              </AnimatedSection>
+            </div>
+          </div>
+
+          {/* Floating emotional keywords */}
+          <div className="mt-16 flex flex-wrap justify-center gap-4">
+            {["Öz-farkındalık", "İç huzur", "Duygusal zeka", "Kendini tanıma", "Bilinçli yaşam"].map((word, i) => (
+              <AnimatedSection key={word} delay={400 + i * 50}>
+                <span 
+                  className="px-6 py-3 rounded-full bg-gradient-to-r from-primary/10 to-accent/10 border border-primary/20 text-foreground font-medium hover:scale-110 hover:shadow-lg hover:shadow-primary/20 transition-all duration-300 cursor-default"
+                >
+                  {word}
+                </span>
+              </AnimatedSection>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Features Section */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 relative">
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-muted/30 to-transparent" />
