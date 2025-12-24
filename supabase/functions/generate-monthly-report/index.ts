@@ -113,46 +113,51 @@ Yanıtını şu JSON formatında ver:
 
     console.log('Generating AI monthly report analysis...');
 
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 55000); // 55 second timeout
+
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${LOVABLE_API_KEY}`,
         "Content-Type": "application/json",
       },
+      signal: controller.signal,
       body: JSON.stringify({
         model: "google/gemini-2.5-flash",
         messages: [
           { role: "system", content: systemPrompt },
           { role: "user", content: userPrompt }
         ],
+        max_tokens: 4000,
         tools: [
           {
             type: "function",
             function: {
               name: "generate_monthly_analysis",
-              description: "Generate detailed monthly emotional analysis",
+              description: "Generate detailed monthly emotional analysis in Turkish",
               parameters: {
                 type: "object",
                 properties: {
                   emotionalJourney: { 
                     type: "string",
-                    description: "Detailed emotional journey analysis (150-200 words)"
+                    description: "Detailed emotional journey analysis in Turkish (150-200 words)"
                   },
                   triggerAnalysis: { 
                     type: "string",
-                    description: "Trigger analysis with coping strategies (150-200 words)"
+                    description: "Trigger analysis with coping strategies in Turkish (150-200 words)"
                   },
                   patternInsights: { 
                     type: "string",
-                    description: "Pattern insights from emotion distribution (150-200 words)"
+                    description: "Pattern insights from emotion distribution in Turkish (150-200 words)"
                   },
                   weeklyNarrative: { 
                     type: "string",
-                    description: "Week by week narrative analysis (150-200 words)"
+                    description: "Week by week narrative analysis in Turkish (150-200 words)"
                   },
                   wellbeingSummary: { 
                     type: "string",
-                    description: "Wellbeing summary with actionable recommendations (150-200 words)"
+                    description: "Wellbeing summary with actionable recommendations in Turkish (150-200 words)"
                   }
                 },
                 required: ["emotionalJourney", "triggerAnalysis", "patternInsights", "weeklyNarrative", "wellbeingSummary"],
@@ -164,6 +169,8 @@ Yanıtını şu JSON formatında ver:
         tool_choice: { type: "function", function: { name: "generate_monthly_analysis" } }
       }),
     });
+
+    clearTimeout(timeoutId);
 
     if (!response.ok) {
       const errorText = await response.text();
@@ -219,7 +226,16 @@ Yanıtını şu JSON formatında ver:
 
   } catch (error) {
     console.error('Error in generate-monthly-report:', error);
-    return new Response(JSON.stringify({ error: error instanceof Error ? error.message : "Unknown error" }), {
+    
+    // Check if it's an abort error (timeout)
+    if (error instanceof Error && error.name === 'AbortError') {
+      return new Response(JSON.stringify({ error: "İstek zaman aşımına uğradı. Lütfen tekrar deneyin." }), {
+        status: 504,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    
+    return new Response(JSON.stringify({ error: error instanceof Error ? error.message : "Bilinmeyen hata oluştu" }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });

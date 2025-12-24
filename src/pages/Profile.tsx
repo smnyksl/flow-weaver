@@ -329,21 +329,40 @@ export default function Profile() {
 
       if (error) {
         console.error('AI analysis error:', error);
-        toast.error('AI analizi oluşturulurken hata oluştu');
+        toast.error('AI analizi oluşturulurken hata oluştu. Tekrar deneyin.');
+        return;
+      }
+
+      if (data?.error) {
+        console.error('AI analysis returned error:', data.error);
+        toast.error(data.error);
         return;
       }
 
       if (data?.analysis) {
+        // Validate that all fields are present and not empty
+        const analysis = data.analysis;
+        const requiredFields = ['emotionalJourney', 'triggerAnalysis', 'patternInsights', 'weeklyNarrative', 'wellbeingSummary'];
+        const missingFields = requiredFields.filter(field => !analysis[field] || analysis[field].trim().length < 20);
+        
+        if (missingFields.length > 0) {
+          console.error('Incomplete AI analysis, missing fields:', missingFields);
+          toast.error('AI analizi eksik kaldı. Tekrar deneyin.');
+          return;
+        }
+
         setMonthlyReport({
           ...monthlyReport,
-          deepAnalysis: data.analysis
+          deepAnalysis: analysis
         });
         setHasAiAnalysis(true);
         toast.success('AI analizi oluşturuldu!');
+      } else {
+        toast.error('AI yanıtı alınamadı. Tekrar deneyin.');
       }
     } catch (error) {
       console.error('Error generating AI analysis:', error);
-      toast.error('AI analizi oluşturulurken hata oluştu');
+      toast.error('Bağlantı hatası. Tekrar deneyin.');
     } finally {
       setAiAnalysisLoading(false);
     }
