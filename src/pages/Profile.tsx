@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Save, User, Music, Gamepad2, Moon, Dumbbell, Brain, Target, Loader2 } from 'lucide-react';
+import { ArrowLeft, Save, User, Music, Gamepad2, Moon, Dumbbell, Brain, Target, Loader2, Palette, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAuth } from '@/hooks/useAuth';
 import { usePreferences } from '@/hooks/usePreferences';
-import { ONBOARDING_STEPS } from '@/types/preferences';
+import { useTheme } from '@/hooks/useTheme';
+import { ONBOARDING_STEPS, THEME_COLORS, ThemeColor } from '@/types/preferences';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
@@ -23,6 +24,7 @@ export default function Profile() {
   const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
   const { preferences, loading: prefLoading } = usePreferences(user?.id);
+  const { themeColor, updateTheme } = useTheme();
   const [formData, setFormData] = useState<Record<string, string | string[]>>({});
   const [isSaving, setIsSaving] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
@@ -66,6 +68,11 @@ export default function Profile() {
       return ((formData[field] as string[]) || []).includes(value);
     }
     return formData[field] === value;
+  };
+
+  const handleColorChange = (color: ThemeColor) => {
+    updateTheme(color);
+    toast.success('Tema rengi değiştirildi!');
   };
 
   const handleSave = async () => {
@@ -146,6 +153,51 @@ export default function Profile() {
 
       {/* Content */}
       <main className="container mx-auto px-4 py-6 max-w-2xl space-y-6">
+        {/* Theme Color Selector */}
+        <Card className="overflow-hidden border-2 border-primary/20">
+          <CardHeader className="pb-3 bg-gradient-to-r from-primary/10 to-accent/10">
+            <CardTitle className="flex items-center gap-3 text-base">
+              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center">
+                <Palette className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <span className="block">Tema Rengi</span>
+                <span className="text-sm font-normal text-muted-foreground">Uygulamanın rengini seç</span>
+              </div>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="pt-4">
+            <div className="flex flex-wrap gap-3">
+              {THEME_COLORS.map((color) => (
+                <button
+                  key={color.value}
+                  onClick={() => handleColorChange(color.value)}
+                  className={cn(
+                    'relative w-14 h-14 rounded-xl transition-all duration-200 hover:scale-110 active:scale-95',
+                    'ring-2 ring-offset-2 ring-offset-background',
+                    themeColor === color.value 
+                      ? 'ring-foreground shadow-lg' 
+                      : 'ring-transparent hover:ring-muted-foreground/50'
+                  )}
+                  style={{
+                    background: `linear-gradient(135deg, hsl(${color.hue} 70% 50%), hsl(${(color.hue + 60) % 360} 60% 50%))`
+                  }}
+                  title={color.label}
+                >
+                  {themeColor === color.value && (
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <Check className="w-6 h-6 text-white drop-shadow-md" />
+                    </div>
+                  )}
+                </button>
+              ))}
+            </div>
+            <p className="text-xs text-muted-foreground mt-3">
+              Seçilen renk: <span className="font-medium text-foreground">{THEME_COLORS.find(c => c.value === themeColor)?.label}</span>
+            </p>
+          </CardContent>
+        </Card>
+
         {ONBOARDING_STEPS.map((step) => (
           <Card key={step.id} className="overflow-hidden">
             <CardHeader className="pb-3">
