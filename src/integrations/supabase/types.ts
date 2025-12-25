@@ -132,6 +132,7 @@ export type Database = {
           personality_type: string | null
           sleep_pattern: string | null
           stress_coping: string[] | null
+          theme_color: string | null
           updated_at: string
           user_id: string
         }
@@ -147,6 +148,7 @@ export type Database = {
           personality_type?: string | null
           sleep_pattern?: string | null
           stress_coping?: string[] | null
+          theme_color?: string | null
           updated_at?: string
           user_id: string
         }
@@ -162,6 +164,7 @@ export type Database = {
           personality_type?: string | null
           sleep_pattern?: string | null
           stress_coping?: string[] | null
+          theme_color?: string | null
           updated_at?: string
           user_id?: string
         }

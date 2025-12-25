@@ -5,6 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { useTheme } from "@/hooks/useTheme";
 import Landing from "./pages/Landing";
 import Pricing from "./pages/Pricing";
 import Index from "./pages/Index";
@@ -45,12 +46,19 @@ function AuthHashHandler() {
   return null;
 }
 
+// Theme initializer component
+function ThemeInitializer() {
+  useTheme(); // This will load and apply the theme
+  return null;
+}
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <Toaster />
       <Sonner />
       <BrowserRouter>
+        <ThemeInitializer />
         <AuthHashHandler />
         <Routes>
           <Route path="/" element={<Landing />} />

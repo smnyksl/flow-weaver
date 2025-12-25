@@ -10,9 +10,21 @@ export interface UserPreferences {
   meditation_experience: string | null;
   emotional_goals: string[];
   onboarding_completed: boolean;
+  theme_color: string | null;
   created_at: string;
   updated_at: string;
 }
+
+export type ThemeColor = 'purple' | 'blue' | 'green' | 'orange' | 'pink' | 'teal';
+
+export const THEME_COLORS: { value: ThemeColor; label: string; hue: number }[] = [
+  { value: 'purple', label: 'Mor', hue: 270 },
+  { value: 'blue', label: 'Mavi', hue: 210 },
+  { value: 'green', label: 'Yeşil', hue: 150 },
+  { value: 'orange', label: 'Turuncu', hue: 30 },
+  { value: 'pink', label: 'Pembe', hue: 330 },
+  { value: 'teal', label: 'Turkuaz', hue: 180 },
+];
 
 export interface OnboardingStep {
   id: string;
