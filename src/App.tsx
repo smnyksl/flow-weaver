@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useTheme } from "@/hooks/useTheme";
+import "@/i18n";
 import Landing from "./pages/Landing";
 import Pricing from "./pages/Pricing";
 import Index from "./pages/Index";
@@ -48,7 +49,7 @@ function AuthHashHandler() {
 
 // Theme initializer component
 function ThemeInitializer() {
-  useTheme(); // This will load and apply the theme
+  useTheme();
   return null;
 }
 
@@ -68,7 +69,6 @@ const App = () => (
           <Route path="/onboarding" element={<Onboarding />} />
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/profile" element={<Profile />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<Auth />} />
         </Routes>
       </BrowserRouter>

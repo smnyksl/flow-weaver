@@ -11,6 +11,7 @@ export interface UserPreferences {
   emotional_goals: string[];
   onboarding_completed: boolean;
   theme_color: string | null;
+  language: string | null;
   created_at: string;
   updated_at: string;
 }

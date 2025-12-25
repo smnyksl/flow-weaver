@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Brain, Heart, TrendingUp, Sparkles, Shield, BarChart3, ArrowRight, CheckCircle2, Star, Zap } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -11,19 +12,19 @@ const features = [
   {
     icon: Brain,
     title: 'AI Destekli Analiz',
-    description: 'Yapay zeka ile duygularınızı derinlemesine analiz edin ve kişiselleştirilmiş içgörüler edinin.',
+    description: 'Yapay zeka ile duygularınızı derinlemesine analiz edin.',
     gradient: 'from-purple-500 to-pink-500',
   },
   {
     icon: Heart,
     title: 'Duygusal Takip',
-    description: 'Günlük duygularınızı kaydedin, tetikleyicileri belirleyin ve duygusal yolculuğunuzu takip edin.',
+    description: 'Günlük duygularınızı kaydedin ve takip edin.',
     gradient: 'from-red-500 to-orange-500',
   },
   {
     icon: TrendingUp,
     title: 'İlerleme Raporları',
-    description: 'Haftalık ve aylık raporlarla duygusal sağlığınızdaki gelişmeleri görün.',
+    description: 'Haftalık ve aylık raporlarla gelişiminizi görün.',
     gradient: 'from-green-500 to-teal-500',
   },
   {
@@ -35,18 +36,18 @@ const features = [
 ];
 
 const benefits = [
-  'Duygularınızı daha iyi anlayın',
-  'Stres tetikleyicilerinizi keşfedin',
-  'Kişiselleştirilmiş öneriler alın',
-  'Duygusal farkındalığınızı artırın',
-  'Pozitif alışkanlıklar geliştirin',
+  'Understand your emotions better',
+  'Discover your stress triggers',
+  'Get personalized recommendations',
+  'Increase emotional awareness',
+  'Develop positive habits',
 ];
 
 const stats = [
-  { value: '10K+', label: 'Aktif Kullanıcı' },
-  { value: '500K+', label: 'Günlük Kayıt' },
-  { value: '95%', label: 'Memnuniyet' },
-  { value: '4.9', label: 'Uygulama Puanı', icon: Star },
+  { value: '10K+', label: 'Active Users' },
+  { value: '500K+', label: 'Journal Entries' },
+  { value: '95%', label: 'Satisfaction' },
+  { value: '4.9', label: 'App Rating', icon: Star },
 ];
 
 // Custom hook for intersection observer animations
