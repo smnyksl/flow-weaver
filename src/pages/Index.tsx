@@ -5,7 +5,7 @@ import { JournalInput } from '@/components/journal/JournalInput';
 import { EmotionDisplay } from '@/components/journal/EmotionDisplay';
 import { SuggestionList } from '@/components/journal/SuggestionList';
 import { InsightsPanel } from '@/components/journal/InsightsPanel';
-import { DetailedInsightsPanel } from '@/components/journal/DetailedInsightsPanel';
+import { InsightsReportPanel } from '@/components/journal/InsightsReportPanel';
 import { JournalHistory } from '@/components/journal/JournalHistory';
 import { EmotionCalendar } from '@/components/journal/EmotionCalendar';
 import { RewardsPanel } from '@/components/journal/RewardsPanel';
@@ -19,7 +19,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { usePreferences } from '@/hooks/usePreferences';
 import { toast } from 'sonner';
 import { Suggestion, JournalEntry } from '@/types/journal';
-import { BookOpen, History, Calendar, Trophy, Loader2, Brain } from 'lucide-react';
+import { BookOpen, History, Calendar, Trophy, Loader2, BarChart3 } from 'lucide-react';
 
 const Index = () => {
   const navigate = useNavigate();
@@ -81,8 +81,8 @@ const Index = () => {
             <span className="text-xs">Geçmiş</span>
           </TabsTrigger>
           <TabsTrigger value="insights" className="flex flex-col items-center gap-1 py-2 data-[state=active]:bg-transparent data-[state=active]:text-primary data-[state=active]:shadow-none">
-            <Brain className="w-5 h-5" />
-            <span className="text-xs">İçgörü</span>
+            <BarChart3 className="w-5 h-5" />
+            <span className="text-xs">Raporlar</span>
           </TabsTrigger>
           <TabsTrigger value="calendar" className="flex flex-col items-center gap-1 py-2 data-[state=active]:bg-transparent data-[state=active]:text-primary data-[state=active]:shadow-none">
             <Calendar className="w-5 h-5" />
@@ -124,8 +124,9 @@ const Index = () => {
             </TabsContent>
 
             <TabsContent value="insights" className="mt-0">
-              <DetailedInsightsPanel 
+              <InsightsReportPanel 
                 entries={entries}
+                userId={user.id}
                 weeklyInsight={currentInsights?.weekly}
                 monthlyInsight={currentInsights?.monthly}
               />
