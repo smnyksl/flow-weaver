@@ -1,0 +1,188 @@
+{
+  "common": {
+    "save": "Kaydet",
+    "cancel": "İptal",
+    "delete": "Sil",
+    "edit": "Düzenle",
+    "loading": "Yükleniyor...",
+    "error": "Bir hata oluştu",
+    "success": "Başarılı",
+    "back": "Geri",
+    "next": "İleri",
+    "close": "Kapat",
+    "confirm": "Onayla",
+    "today": "Bugün",
+    "yesterday": "Dün",
+    "thisWeek": "Bu Hafta",
+    "thisMonth": "Bu Ay"
+  },
+  "auth": {
+    "login": "Giriş Yap",
+    "register": "Kayıt Ol",
+    "logout": "Çıkış Yap",
+    "email": "E-posta",
+    "password": "Şifre",
+    "forgotPassword": "Şifremi unuttum",
+    "resetPassword": "Şifreyi Sıfırla",
+    "newPassword": "Yeni Şifre",
+    "confirmPassword": "Şifreyi Onayla",
+    "loginToAccount": "Hesabınıza giriş yapın",
+    "createAccount": "Yeni hesap oluşturun",
+    "emailPlaceholder": "ornek@email.com",
+    "passwordPlaceholder": "••••••••",
+    "loginSuccess": "Giriş başarılı!",
+    "registerSuccess": "Kayıt başarılı! Giriş yapabilirsiniz.",
+    "resetEmailSent": "Şifre sıfırlama linki e-posta adresinize gönderildi.",
+    "passwordResetSuccess": "Şifreniz başarıyla güncellendi!",
+    "invalidCredentials": "Geçersiz e-posta veya şifre"
+  },
+  "landing": {
+    "title": "Duygu Günlüğü",
+    "subtitle": "Duygularını yazarak keşfet",
+    "hero": "Duygularını Keşfet",
+    "heroSubtitle": "Günlük tutarak duygusal farkındalığını artır, AI destekli analizlerle kendini daha iyi tanı.",
+    "startFree": "Ücretsiz Başla",
+    "viewPricing": "Fiyatları Gör",
+    "features": "Özellikler",
+    "feature1Title": "Duygu Takibi",
+    "feature1Desc": "Günlük duygularını kaydet ve zaman içindeki değişimleri gör.",
+    "feature2Title": "AI Analizi",
+    "feature2Desc": "Yapay zeka ile duygusal örüntülerini keşfet.",
+    "feature3Title": "Kişisel Öneriler",
+    "feature3Desc": "Ruh haline göre kişiselleştirilmiş aktivite önerileri al."
+  },
+  "journal": {
+    "title": "Günlük",
+    "newEntry": "Yeni Giriş",
+    "howDoYouFeel": "Bugün nasıl hissediyorsun?",
+    "writeFeelings": "Duygularını yaz...",
+    "writeHere": "Buraya yaz...",
+    "intensity": "Yoğunluk",
+    "triggers": "Tetikleyiciler",
+    "selectTriggers": "Tetikleyicileri seç",
+    "analyze": "Analiz Et",
+    "analyzing": "Analiz ediliyor...",
+    "save": "Kaydet",
+    "noEntries": "Henüz günlük girişi yok",
+    "startWriting": "Duygularını yazmaya başla!",
+    "entrySaved": "Günlük girişi kaydedildi!",
+    "entryDeleted": "Günlük girişi silindi",
+    "viewAll": "Tümünü Gör",
+    "recentEntries": "Son Girişler",
+    "emotionCalendar": "Duygu Takvimi",
+    "stats": "İstatistikler",
+    "history": "Geçmiş"
+  },
+  "emotions": {
+    "happy": "Mutlu",
+    "sad": "Üzgün",
+    "anxious": "Kaygılı",
+    "angry": "Öfkeli",
+    "neutral": "Nötr",
+    "excited": "Heyecanlı",
+    "calm": "Sakin"
+  },
+  "triggers": {
+    "work": "İş",
+    "family": "Aile",
+    "health": "Sağlık",
+    "relationships": "İlişkiler",
+    "finance": "Finans",
+    "sleep": "Uyku",
+    "weather": "Hava",
+    "social": "Sosyal",
+    "exercise": "Egzersiz",
+    "food": "Yemek"
+  },
+  "reports": {
+    "title": "Raporlar",
+    "weekly": "Haftalık Rapor",
+    "monthly": "Aylık Rapor",
+    "last7Days": "Son 7 gün",
+    "last30Days": "Son 30 gün",
+    "totalEntries": "Toplam Giriş",
+    "avgIntensity": "Ort. Yoğunluk",
+    "dominantEmotion": "Baskın Duygu",
+    "emotionBreakdown": "Duygu Dağılımı",
+    "trend": "Trend",
+    "trendUp": "Bu hafta geçen haftaya göre daha iyi hissediyorsun! 🎉",
+    "trendDown": "Bu hafta biraz zorlanmış gibisin, kendine iyi bak 💙",
+    "trendStable": "Bu hafta duygusal olarak dengeli bir seyir izliyorsun ⚖️",
+    "noData": "Bu dönem için yeterli veri yok",
+    "aiAnalysis": "AI Derin Analizi",
+    "generateAnalysis": "AI Analizi Oluştur",
+    "savedAnalyses": "Kaydedilmiş Analizler",
+    "emotionalJourney": "Duygusal Yolculuk",
+    "triggerAnalysis": "Tetikleyici Analizi",
+    "patternInsights": "Duygu Örüntüleri",
+    "weeklyNarrative": "Haftalık Seyir",
+    "wellbeingSummary": "Genel İyilik Hali",
+    "recommendations": "Öneriler",
+    "topTriggers": "En Sık Tetikleyiciler",
+    "positiveRatio": "Pozitif Oran",
+    "negativeRatio": "Negatif Oran"
+  },
+  "profile": {
+    "title": "Profil",
+    "subtitle": "Tercihlerini düzenle",
+    "preferences": "Tercihler",
+    "themeColor": "Tema Rengi",
+    "themeColorDesc": "Uygulamanın rengini seç",
+    "language": "Dil",
+    "languageDesc": "Uygulama dilini seç",
+    "accountInfo": "Hesap Bilgileri",
+    "emailAddress": "E-posta adresin",
+    "preferencesSaved": "Tercihler güncellendi!",
+    "themeChanged": "Tema rengi değiştirildi!",
+    "languageChanged": "Dil değiştirildi!"
+  },
+  "colors": {
+    "purple": "Mor",
+    "blue": "Mavi",
+    "green": "Yeşil",
+    "orange": "Turuncu",
+    "pink": "Pembe",
+    "teal": "Turkuaz"
+  },
+  "languages": {
+    "tr": "Türkçe",
+    "en": "English",
+    "de": "Deutsch"
+  },
+  "onboarding": {
+    "music": {
+      "title": "Hangi müzik türlerini seviyorsun?",
+      "subtitle": "Ruh haline göre müzik önerileri için"
+    },
+    "hobbies": {
+      "title": "Boş zamanlarında neler yaparsın?",
+      "subtitle": "Aktivite önerileri için"
+    },
+    "sleep": {
+      "title": "Uyku düzenin nasıl?",
+      "subtitle": "Enerji seviyeni daha iyi anlamamız için"
+    },
+    "exercise": {
+      "title": "Ne sıklıkla egzersiz yaparsın?",
+      "subtitle": "Fiziksel aktivite önerileri için"
+    },
+    "personality": {
+      "title": "Kendini nasıl tanımlarsın?",
+      "subtitle": "Kişiliğine uygun öneriler için"
+    },
+    "goals": {
+      "title": "Duygusal hedeflerin neler?",
+      "subtitle": "Sana özel tavsiyelerde bulunmamız için"
+    }
+  },
+  "tabs": {
+    "journal": "Günlük",
+    "calendar": "Takvim",
+    "reports": "Raporlar"
+  },
+  "insights": {
+    "title": "İçgörüler",
+    "suggestion": "Öneri",
+    "basedOnMood": "Ruh haline göre"
+  }
+}

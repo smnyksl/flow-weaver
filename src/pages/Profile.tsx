@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Save, User, Music, Gamepad2, Moon, Dumbbell, Brain, Target, Loader2, Palette, Check } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { ArrowLeft, Save, User, Music, Gamepad2, Moon, Dumbbell, Brain, Target, Loader2, Palette, Check, Globe } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAuth } from '@/hooks/useAuth';
@@ -10,6 +11,14 @@ import { ONBOARDING_STEPS, THEME_COLORS, ThemeColor } from '@/types/preferences'
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
+
+type Language = 'tr' | 'en' | 'de';
+
+const LANGUAGES: { value: Language; label: string; flag: string }[] = [
+  { value: 'tr', label: 'Türkçe', flag: '🇹🇷' },
+  { value: 'en', label: 'English', flag: '🇬🇧' },
+  { value: 'de', label: 'Deutsch', flag: '🇩🇪' },
+];
 
 const sectionIcons: Record<string, React.ReactNode> = {
   music: <Music className="w-5 h-5" />,
@@ -22,18 +31,28 @@ const sectionIcons: Record<string, React.ReactNode> = {
 
 export default function Profile() {
   const navigate = useNavigate();
+  const { t, i18n } = useTranslation();
   const { user, loading: authLoading } = useAuth();
   const { preferences, loading: prefLoading } = usePreferences(user?.id);
   const { themeColor, updateTheme } = useTheme();
   const [formData, setFormData] = useState<Record<string, string | string[]>>({});
   const [isSaving, setIsSaving] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
+  const [currentLanguage, setCurrentLanguage] = useState<Language>('tr');
 
   useEffect(() => {
     if (!authLoading && !user) {
       navigate('/auth');
     }
   }, [user, authLoading, navigate]);
+
+  useEffect(() => {
+    // Load language from preferences or localStorage
+    const savedLang = localStorage.getItem('app_language') as Language;
+    if (savedLang) {
+      setCurrentLanguage(savedLang);
+    }
+  }, []);
 
   useEffect(() => {
     if (preferences) {
@@ -47,8 +66,14 @@ export default function Profile() {
         meditation_experience: preferences.meditation_experience || '',
         emotional_goals: preferences.emotional_goals || [],
       });
+      
+      // Set language from preferences if available
+      if (preferences.language) {
+        setCurrentLanguage(preferences.language as Language);
+        i18n.changeLanguage(preferences.language);
+      }
     }
-  }, [preferences]);
+  }, [preferences, i18n]);
 
   const handleOptionToggle = (field: string, value: string, isMulti: boolean) => {
     setHasChanges(true);
@@ -72,7 +97,26 @@ export default function Profile() {
 
   const handleColorChange = (color: ThemeColor) => {
     updateTheme(color);
-    toast.success('Tema rengi değiştirildi!');
+    toast.success(t('profile.themeChanged'));
+  };
+
+  const handleLanguageChange = async (lang: Language) => {
+    setCurrentLanguage(lang);
+    i18n.changeLanguage(lang);
+    localStorage.setItem('app_language', lang);
+    
+    if (user) {
+      try {
+        await supabase
+          .from('user_preferences')
+          .update({ language: lang })
+          .eq('user_id', user.id);
+      } catch (error) {
+        console.error('Error saving language:', error);
+      }
+    }
+    
+    toast.success(t('profile.languageChanged'));
   };
 
   const handleSave = async () => {
@@ -96,11 +140,11 @@ export default function Profile() {
 
       if (error) throw error;
 
-      toast.success('Tercihler güncellendi!');
+      toast.success(t('profile.preferencesSaved'));
       setHasChanges(false);
     } catch (error) {
       console.error('Error saving preferences:', error);
-      toast.error('Tercihler kaydedilirken hata oluştu');
+      toast.error(t('common.error'));
     } finally {
       setIsSaving(false);
     }
@@ -129,8 +173,8 @@ export default function Profile() {
                   <User className="w-5 h-5 text-white" />
                 </div>
                 <div>
-                  <h1 className="text-lg font-semibold text-foreground">Profil</h1>
-                  <p className="text-xs text-muted-foreground">Tercihlerini düzenle</p>
+                  <h1 className="text-lg font-semibold text-foreground">{t('profile.title')}</h1>
+                  <p className="text-xs text-muted-foreground">{t('profile.subtitle')}</p>
                 </div>
               </div>
             </div>
@@ -145,7 +189,7 @@ export default function Profile() {
               ) : (
                 <Save className="w-4 h-4" />
               )}
-              Kaydet
+              {t('common.save')}
             </Button>
           </div>
         </div>
@@ -153,6 +197,49 @@ export default function Profile() {
 
       {/* Content */}
       <main className="container mx-auto px-4 py-6 max-w-2xl space-y-6">
+        {/* Language Selector */}
+        <Card className="overflow-hidden border-2 border-primary/20">
+          <CardHeader className="pb-3 bg-gradient-to-r from-primary/10 to-accent/10">
+            <CardTitle className="flex items-center gap-3 text-base">
+              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center">
+                <Globe className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <span className="block">{t('profile.language')}</span>
+                <span className="text-sm font-normal text-muted-foreground">{t('profile.languageDesc')}</span>
+              </div>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="pt-4">
+            <div className="flex flex-wrap gap-3">
+              {LANGUAGES.map((lang) => (
+                <button
+                  key={lang.value}
+                  onClick={() => handleLanguageChange(lang.value)}
+                  className={cn(
+                    'flex items-center gap-3 px-4 py-3 rounded-xl border-2 transition-all duration-200',
+                    'hover:scale-105 active:scale-95',
+                    currentLanguage === lang.value
+                      ? 'bg-primary/10 border-primary shadow-md'
+                      : 'bg-card border-border hover:border-primary/50'
+                  )}
+                >
+                  <span className="text-2xl">{lang.flag}</span>
+                  <span className={cn(
+                    'font-medium',
+                    currentLanguage === lang.value ? 'text-primary' : 'text-foreground'
+                  )}>
+                    {lang.label}
+                  </span>
+                  {currentLanguage === lang.value && (
+                    <Check className="w-5 h-5 text-primary" />
+                  )}
+                </button>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Theme Color Selector */}
         <Card className="overflow-hidden border-2 border-primary/20">
           <CardHeader className="pb-3 bg-gradient-to-r from-primary/10 to-accent/10">
@@ -161,8 +248,8 @@ export default function Profile() {
                 <Palette className="w-5 h-5 text-white" />
               </div>
               <div>
-                <span className="block">Tema Rengi</span>
-                <span className="text-sm font-normal text-muted-foreground">Uygulamanın rengini seç</span>
+                <span className="block">{t('profile.themeColor')}</span>
+                <span className="text-sm font-normal text-muted-foreground">{t('profile.themeColorDesc')}</span>
               </div>
             </CardTitle>
           </CardHeader>
@@ -182,7 +269,7 @@ export default function Profile() {
                   style={{
                     background: `linear-gradient(135deg, hsl(${color.hue} 70% 50%), hsl(${(color.hue + 60) % 360} 60% 50%))`
                   }}
-                  title={color.label}
+                  title={t(`colors.${color.value}`)}
                 >
                   {themeColor === color.value && (
                     <div className="absolute inset-0 flex items-center justify-center">
@@ -193,7 +280,7 @@ export default function Profile() {
               ))}
             </div>
             <p className="text-xs text-muted-foreground mt-3">
-              Seçilen renk: <span className="font-medium text-foreground">{THEME_COLORS.find(c => c.value === themeColor)?.label}</span>
+              {t('colors.' + themeColor)}
             </p>
           </CardContent>
         </Card>
@@ -206,8 +293,8 @@ export default function Profile() {
                   {sectionIcons[step.id]}
                 </div>
                 <div>
-                  <span className="block">{step.title}</span>
-                  <span className="text-sm font-normal text-muted-foreground">{step.subtitle}</span>
+                  <span className="block">{t(`onboarding.${step.id}.title`)}</span>
+                  <span className="text-sm font-normal text-muted-foreground">{t(`onboarding.${step.id}.subtitle`)}</span>
                 </div>
               </CardTitle>
             </CardHeader>
@@ -246,8 +333,8 @@ export default function Profile() {
                 <User className="w-5 h-5" />
               </div>
               <div>
-                <span className="block">Hesap Bilgileri</span>
-                <span className="text-sm font-normal text-muted-foreground">E-posta adresin</span>
+                <span className="block">{t('profile.accountInfo')}</span>
+                <span className="text-sm font-normal text-muted-foreground">{t('profile.emailAddress')}</span>
               </div>
             </CardTitle>
           </CardHeader>

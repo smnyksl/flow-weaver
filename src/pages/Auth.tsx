@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -10,14 +11,9 @@ import { useAuth } from '@/hooks/useAuth';
 import { Heart, Loader2, ArrowLeft, Mail, CheckCircle2 } from 'lucide-react';
 import { z } from 'zod';
 
-const authSchema = z.object({
-  email: z.string().trim().email({ message: "Geçerli bir e-posta adresi girin" }),
-  password: z.string().min(6, { message: "Şifre en az 6 karakter olmalı" }),
-  displayName: z.string().trim().max(50, { message: "İsim en fazla 50 karakter olmalı" }).optional()
-});
-
 export default function Auth() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { user, loading, signUp, signIn, resetPassword } = useAuth();
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [showEmailConfirmation, setShowEmailConfirmation] = useState(false);
@@ -30,12 +26,17 @@ export default function Auth() {
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
 
+  const authSchema = z.object({
+    email: z.string().trim().email({ message: t('auth.invalidCredentials') }),
+    password: z.string().min(6, { message: t('auth.invalidCredentials') }),
+    displayName: z.string().trim().max(50).optional()
+  });
+
   useEffect(() => {
     if (!loading && user) {
       navigate('/app');
     }
   }, [user, loading, navigate]);
-
 
   const validateForm = (includeDisplayName: boolean) => {
     try {
@@ -70,9 +71,9 @@ export default function Auth() {
     
     if (error) {
       if (error.message.includes('already registered')) {
-        toast.error('Bu e-posta adresi zaten kayıtlı');
+        toast.error(t('auth.invalidCredentials'));
       } else {
-        toast.error('Kayıt sırasında bir hata oluştu');
+        toast.error(t('common.error'));
       }
     } else {
       setRegisteredEmail(formData.email);
@@ -90,14 +91,14 @@ export default function Auth() {
     
     if (error) {
       if (error.message.includes('Invalid login')) {
-        toast.error('E-posta veya şifre hatalı');
+        toast.error(t('auth.invalidCredentials'));
       } else if (error.message.includes('Email not confirmed')) {
-        toast.error('E-posta adresinizi doğrulamanız gerekiyor. Lütfen gelen kutunuzu kontrol edin.');
+        toast.error(t('auth.invalidCredentials'));
       } else {
-        toast.error('Giriş sırasında bir hata oluştu');
+        toast.error(t('common.error'));
       }
     } else {
-      toast.success('Giriş başarılı!');
+      toast.success(t('auth.loginSuccess'));
       navigate('/app');
     }
   };
@@ -119,8 +120,8 @@ export default function Auth() {
               <Heart className="h-8 w-8 text-primary" />
             </div>
           </div>
-          <h1 className="text-2xl font-bold text-foreground">Duygu Günlüğü</h1>
-          <p className="text-muted-foreground">Duygularını yazarak keşfet</p>
+          <h1 className="text-2xl font-bold text-foreground">{t('landing.title')}</h1>
+          <p className="text-muted-foreground">{t('landing.subtitle')}</p>
         </div>
 
         {showEmailConfirmation ? (
@@ -137,9 +138,9 @@ export default function Auth() {
             onSubmit={async (email) => {
               const { error } = await resetPassword(email);
               if (error) {
-                toast.error('Şifre sıfırlama e-postası gönderilemedi');
+                toast.error(t('common.error'));
               } else {
-                toast.success('Şifre sıfırlama linki e-posta adresinize gönderildi');
+                toast.success(t('auth.resetEmailSent'));
                 setShowForgotPassword(false);
               }
             }}
@@ -149,23 +150,23 @@ export default function Auth() {
           <Tabs defaultValue="login" className="w-full">
             <CardHeader className="pb-3">
               <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="login">Giriş Yap</TabsTrigger>
-                <TabsTrigger value="signup">Kayıt Ol</TabsTrigger>
+                <TabsTrigger value="login">{t('auth.login')}</TabsTrigger>
+                <TabsTrigger value="signup">{t('auth.register')}</TabsTrigger>
               </TabsList>
             </CardHeader>
             
             <CardContent>
               <TabsContent value="login" className="space-y-4 mt-0">
                 <CardDescription className="text-center">
-                  Hesabınıza giriş yapın
+                  {t('auth.loginToAccount')}
                 </CardDescription>
                 <form onSubmit={handleSignIn} className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="login-email">E-posta</Label>
+                    <Label htmlFor="login-email">{t('auth.email')}</Label>
                     <Input
                       id="login-email"
                       type="email"
-                      placeholder="ornek@email.com"
+                      placeholder={t('auth.emailPlaceholder')}
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                       className={errors.email ? 'border-destructive' : ''}
@@ -173,11 +174,11 @@ export default function Auth() {
                     {errors.email && <p className="text-xs text-destructive">{errors.email}</p>}
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="login-password">Şifre</Label>
+                    <Label htmlFor="login-password">{t('auth.password')}</Label>
                     <Input
                       id="login-password"
                       type="password"
-                      placeholder="••••••••"
+                      placeholder={t('auth.passwordPlaceholder')}
                       value={formData.password}
                       onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                       className={errors.password ? 'border-destructive' : ''}
@@ -186,29 +187,29 @@ export default function Auth() {
                   </div>
                   <Button type="submit" className="w-full" disabled={isSubmitting}>
                     {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
-                    Giriş Yap
+                    {t('auth.login')}
                   </Button>
                   <button
                     type="button"
                     onClick={() => setShowForgotPassword(true)}
                     className="w-full text-sm text-muted-foreground hover:text-primary transition-colors"
                   >
-                    Şifremi unuttum
+                    {t('auth.forgotPassword')}
                   </button>
                 </form>
               </TabsContent>
 
               <TabsContent value="signup" className="space-y-4 mt-0">
                 <CardDescription className="text-center">
-                  Yeni bir hesap oluşturun
+                  {t('auth.createAccount')}
                 </CardDescription>
                 <form onSubmit={handleSignUp} className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="signup-name">İsim (isteğe bağlı)</Label>
+                    <Label htmlFor="signup-name">Name (optional)</Label>
                     <Input
                       id="signup-name"
                       type="text"
-                      placeholder="Adınız"
+                      placeholder="Your name"
                       value={formData.displayName}
                       onChange={(e) => setFormData({ ...formData, displayName: e.target.value })}
                       className={errors.displayName ? 'border-destructive' : ''}
@@ -216,11 +217,11 @@ export default function Auth() {
                     {errors.displayName && <p className="text-xs text-destructive">{errors.displayName}</p>}
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="signup-email">E-posta</Label>
+                    <Label htmlFor="signup-email">{t('auth.email')}</Label>
                     <Input
                       id="signup-email"
                       type="email"
-                      placeholder="ornek@email.com"
+                      placeholder={t('auth.emailPlaceholder')}
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                       className={errors.email ? 'border-destructive' : ''}
@@ -228,11 +229,11 @@ export default function Auth() {
                     {errors.email && <p className="text-xs text-destructive">{errors.email}</p>}
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="signup-password">Şifre</Label>
+                    <Label htmlFor="signup-password">{t('auth.password')}</Label>
                     <Input
                       id="signup-password"
                       type="password"
-                      placeholder="En az 6 karakter"
+                      placeholder="Min 6 characters"
                       value={formData.password}
                       onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                       className={errors.password ? 'border-destructive' : ''}
@@ -241,7 +242,7 @@ export default function Auth() {
                   </div>
                   <Button type="submit" className="w-full" disabled={isSubmitting}>
                     {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
-                    Kayıt Ol
+                    {t('auth.register')}
                   </Button>
                 </form>
               </TabsContent>
@@ -261,15 +262,17 @@ function EmailConfirmationCard({
   email: string; 
   onBack: () => void;
 }) {
+  const { t } = useTranslation();
+  
   return (
     <Card className="border-border/50 bg-card/50 backdrop-blur">
       <CardHeader className="text-center pb-2">
         <div className="mx-auto mb-4 p-4 rounded-full bg-primary/20">
           <Mail className="h-8 w-8 text-primary" />
         </div>
-        <CardTitle className="text-xl">E-postanızı Doğrulayın</CardTitle>
+        <CardTitle className="text-xl">Verify Your Email</CardTitle>
         <CardDescription className="text-base">
-          <span className="font-medium text-foreground">{email}</span> adresine bir doğrulama linki gönderdik.
+          We sent a verification link to <span className="font-medium text-foreground">{email}</span>
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -277,13 +280,13 @@ function EmailConfirmationCard({
           <div className="flex items-start gap-3">
             <CheckCircle2 className="h-5 w-5 text-primary mt-0.5 shrink-0" />
             <p className="text-sm text-muted-foreground">
-              E-postanızdaki linke tıklayarak hesabınızı aktif edin
+              Click the link in your email to activate your account
             </p>
           </div>
           <div className="flex items-start gap-3">
             <CheckCircle2 className="h-5 w-5 text-primary mt-0.5 shrink-0" />
             <p className="text-sm text-muted-foreground">
-              Spam/gereksiz klasörünü de kontrol etmeyi unutmayın
+              Check your spam folder if you dont see the email
             </p>
           </div>
         </div>
@@ -293,7 +296,7 @@ function EmailConfirmationCard({
           onClick={onBack}
         >
           <ArrowLeft className="h-4 w-4 mr-2" />
-          Giriş Sayfasına Dön
+          {t('common.back')}
         </Button>
       </CardContent>
     </Card>
@@ -307,6 +310,7 @@ function ForgotPasswordForm({
   onBack: () => void; 
   onSubmit: (email: string) => Promise<void>;
 }) {
+  const { t } = useTranslation();
   const [email, setEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
@@ -314,7 +318,7 @@ function ForgotPasswordForm({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    const emailSchema = z.string().trim().email({ message: "Geçerli bir e-posta adresi girin" });
+    const emailSchema = z.string().trim().email({ message: t('auth.invalidCredentials') });
     const result = emailSchema.safeParse(email);
     
     if (!result.success) {
@@ -336,21 +340,21 @@ function ForgotPasswordForm({
           className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors mb-2"
         >
           <ArrowLeft className="h-4 w-4" />
-          Geri
+          {t('common.back')}
         </button>
-        <CardTitle>Şifremi Unuttum</CardTitle>
+        <CardTitle>{t('auth.forgotPassword')}</CardTitle>
         <CardDescription>
-          E-posta adresinizi girin, size şifre sıfırlama linki gönderelim
+          Enter your email address and we will send you a reset link
         </CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="reset-email">E-posta</Label>
+            <Label htmlFor="reset-email">{t('auth.email')}</Label>
             <Input
               id="reset-email"
               type="email"
-              placeholder="ornek@email.com"
+              placeholder={t('auth.emailPlaceholder')}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className={error ? 'border-destructive' : ''}
@@ -359,7 +363,7 @@ function ForgotPasswordForm({
           </div>
           <Button type="submit" className="w-full" disabled={isSubmitting}>
             {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
-            Sıfırlama Linki Gönder
+            {t('auth.resetPassword')}
           </Button>
         </form>
       </CardContent>

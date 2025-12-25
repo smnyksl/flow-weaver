@@ -126,6 +126,7 @@ export type Database = {
           exercise_frequency: string | null
           hobbies: string[] | null
           id: string
+          language: string | null
           meditation_experience: string | null
           music_genres: string[] | null
           onboarding_completed: boolean | null
@@ -142,6 +143,7 @@ export type Database = {
           exercise_frequency?: string | null
           hobbies?: string[] | null
           id?: string
+          language?: string | null
           meditation_experience?: string | null
           music_genres?: string[] | null
           onboarding_completed?: boolean | null
@@ -158,6 +160,7 @@ export type Database = {
           exercise_frequency?: string | null
           hobbies?: string[] | null
           id?: string
+          language?: string | null
           meditation_experience?: string | null
           music_genres?: string[] | null
           onboarding_completed?: boolean | null

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { AppHeader } from '@/components/journal/AppHeader';
 import { JournalInput } from '@/components/journal/JournalInput';
 import { EmotionDisplay } from '@/components/journal/EmotionDisplay';
@@ -23,6 +24,7 @@ import { BookOpen, History, Calendar, Trophy, Loader2, BarChart3 } from 'lucide-
 
 const Index = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { user, loading: authLoading } = useAuth();
   const { preferences, loading: prefLoading } = usePreferences(user?.id);
   const { entries, currentAnalysis, currentInsights, isAnalyzing, isLoading, addEntry } = useJournal(user?.id, preferences);
@@ -50,7 +52,7 @@ const Index = () => {
       if (entry.suggestions && entry.suggestions.length > 0) {
         setLatestSuggestions(entry.suggestions);
       }
-      toast.success('Günlük girişin kaydedildi!');
+      toast.success(t('journal.entrySaved'));
     }
   };
 
@@ -74,19 +76,19 @@ const Index = () => {
         <TabsList className="w-full grid grid-cols-5 rounded-none border-b border-border bg-card h-14">
           <TabsTrigger value="journal" className="flex flex-col items-center gap-1 py-2 data-[state=active]:bg-transparent data-[state=active]:text-primary data-[state=active]:shadow-none">
             <BookOpen className="w-5 h-5" />
-            <span className="text-xs">Günlük</span>
+            <span className="text-xs">{t('tabs.journal')}</span>
           </TabsTrigger>
           <TabsTrigger value="history" className="flex flex-col items-center gap-1 py-2 data-[state=active]:bg-transparent data-[state=active]:text-primary data-[state=active]:shadow-none">
             <History className="w-5 h-5" />
-            <span className="text-xs">Geçmiş</span>
+            <span className="text-xs">{t('journal.history')}</span>
           </TabsTrigger>
           <TabsTrigger value="insights" className="flex flex-col items-center gap-1 py-2 data-[state=active]:bg-transparent data-[state=active]:text-primary data-[state=active]:shadow-none">
             <BarChart3 className="w-5 h-5" />
-            <span className="text-xs">Raporlar</span>
+            <span className="text-xs">{t('reports.title')}</span>
           </TabsTrigger>
           <TabsTrigger value="calendar" className="flex flex-col items-center gap-1 py-2 data-[state=active]:bg-transparent data-[state=active]:text-primary data-[state=active]:shadow-none">
             <Calendar className="w-5 h-5" />
-            <span className="text-xs">Takvim</span>
+            <span className="text-xs">{t('tabs.calendar')}</span>
           </TabsTrigger>
           <TabsTrigger value="rewards" className="flex flex-col items-center gap-1 py-2 data-[state=active]:bg-transparent data-[state=active]:text-primary data-[state=active]:shadow-none">
             <Trophy className="w-5 h-5" />

@@ -1,0 +1,188 @@
+{
+  "common": {
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "delete": "Löschen",
+    "edit": "Bearbeiten",
+    "loading": "Laden...",
+    "error": "Ein Fehler ist aufgetreten",
+    "success": "Erfolgreich",
+    "back": "Zurück",
+    "next": "Weiter",
+    "close": "Schließen",
+    "confirm": "Bestätigen",
+    "today": "Heute",
+    "yesterday": "Gestern",
+    "thisWeek": "Diese Woche",
+    "thisMonth": "Diesen Monat"
+  },
+  "auth": {
+    "login": "Anmelden",
+    "register": "Registrieren",
+    "logout": "Abmelden",
+    "email": "E-Mail",
+    "password": "Passwort",
+    "forgotPassword": "Passwort vergessen",
+    "resetPassword": "Passwort zurücksetzen",
+    "newPassword": "Neues Passwort",
+    "confirmPassword": "Passwort bestätigen",
+    "loginToAccount": "Bei Ihrem Konto anmelden",
+    "createAccount": "Neues Konto erstellen",
+    "emailPlaceholder": "beispiel@email.com",
+    "passwordPlaceholder": "••••••••",
+    "loginSuccess": "Anmeldung erfolgreich!",
+    "registerSuccess": "Registrierung erfolgreich! Sie können sich jetzt anmelden.",
+    "resetEmailSent": "Link zum Zurücksetzen des Passworts wurde an Ihre E-Mail gesendet.",
+    "passwordResetSuccess": "Ihr Passwort wurde erfolgreich aktualisiert!",
+    "invalidCredentials": "Ungültige E-Mail oder Passwort"
+  },
+  "landing": {
+    "title": "Gefühlstagebuch",
+    "subtitle": "Entdecke deine Gefühle durch Schreiben",
+    "hero": "Entdecke deine Gefühle",
+    "heroSubtitle": "Steigere dein emotionales Bewusstsein durch Tagebuchführung, lerne dich besser kennen mit KI-gestützter Analyse.",
+    "startFree": "Kostenlos starten",
+    "viewPricing": "Preise ansehen",
+    "features": "Funktionen",
+    "feature1Title": "Gefühlsverfolgung",
+    "feature1Desc": "Zeichne deine täglichen Gefühle auf und sieh Veränderungen im Laufe der Zeit.",
+    "feature2Title": "KI-Analyse",
+    "feature2Desc": "Entdecke deine emotionalen Muster mit künstlicher Intelligenz.",
+    "feature3Title": "Persönliche Empfehlungen",
+    "feature3Desc": "Erhalte personalisierte Aktivitätsvorschläge basierend auf deiner Stimmung."
+  },
+  "journal": {
+    "title": "Tagebuch",
+    "newEntry": "Neuer Eintrag",
+    "howDoYouFeel": "Wie fühlst du dich heute?",
+    "writeFeelings": "Schreibe deine Gefühle...",
+    "writeHere": "Hier schreiben...",
+    "intensity": "Intensität",
+    "triggers": "Auslöser",
+    "selectTriggers": "Auslöser auswählen",
+    "analyze": "Analysieren",
+    "analyzing": "Analysiere...",
+    "save": "Speichern",
+    "noEntries": "Noch keine Tagebucheinträge",
+    "startWriting": "Beginne deine Gefühle aufzuschreiben!",
+    "entrySaved": "Tagebucheintrag gespeichert!",
+    "entryDeleted": "Tagebucheintrag gelöscht",
+    "viewAll": "Alle anzeigen",
+    "recentEntries": "Letzte Einträge",
+    "emotionCalendar": "Gefühlskalender",
+    "stats": "Statistiken",
+    "history": "Verlauf"
+  },
+  "emotions": {
+    "happy": "Glücklich",
+    "sad": "Traurig",
+    "anxious": "Ängstlich",
+    "angry": "Wütend",
+    "neutral": "Neutral",
+    "excited": "Aufgeregt",
+    "calm": "Ruhig"
+  },
+  "triggers": {
+    "work": "Arbeit",
+    "family": "Familie",
+    "health": "Gesundheit",
+    "relationships": "Beziehungen",
+    "finance": "Finanzen",
+    "sleep": "Schlaf",
+    "weather": "Wetter",
+    "social": "Soziales",
+    "exercise": "Sport",
+    "food": "Essen"
+  },
+  "reports": {
+    "title": "Berichte",
+    "weekly": "Wochenbericht",
+    "monthly": "Monatsbericht",
+    "last7Days": "Letzte 7 Tage",
+    "last30Days": "Letzte 30 Tage",
+    "totalEntries": "Gesamteinträge",
+    "avgIntensity": "Durchschn. Intensität",
+    "dominantEmotion": "Dominantes Gefühl",
+    "emotionBreakdown": "Gefühlsverteilung",
+    "trend": "Trend",
+    "trendUp": "Du fühlst dich diese Woche besser als letzte Woche! 🎉",
+    "trendDown": "Du scheinst eine schwierige Woche gehabt zu haben, pass auf dich auf 💙",
+    "trendStable": "Du hältst diese Woche ein emotionales Gleichgewicht ⚖️",
+    "noData": "Nicht genügend Daten für diesen Zeitraum",
+    "aiAnalysis": "KI-Tiefenanalyse",
+    "generateAnalysis": "KI-Analyse erstellen",
+    "savedAnalyses": "Gespeicherte Analysen",
+    "emotionalJourney": "Emotionale Reise",
+    "triggerAnalysis": "Auslöser-Analyse",
+    "patternInsights": "Gefühlsmuster",
+    "weeklyNarrative": "Wöchentlicher Fortschritt",
+    "wellbeingSummary": "Allgemeines Wohlbefinden",
+    "recommendations": "Empfehlungen",
+    "topTriggers": "Häufigste Auslöser",
+    "positiveRatio": "Positiver Anteil",
+    "negativeRatio": "Negativer Anteil"
+  },
+  "profile": {
+    "title": "Profil",
+    "subtitle": "Einstellungen bearbeiten",
+    "preferences": "Einstellungen",
+    "themeColor": "Designfarbe",
+    "themeColorDesc": "App-Farbe wählen",
+    "language": "Sprache",
+    "languageDesc": "App-Sprache wählen",
+    "accountInfo": "Kontoinformationen",
+    "emailAddress": "Deine E-Mail-Adresse",
+    "preferencesSaved": "Einstellungen aktualisiert!",
+    "themeChanged": "Designfarbe geändert!",
+    "languageChanged": "Sprache geändert!"
+  },
+  "colors": {
+    "purple": "Lila",
+    "blue": "Blau",
+    "green": "Grün",
+    "orange": "Orange",
+    "pink": "Rosa",
+    "teal": "Türkis"
+  },
+  "languages": {
+    "tr": "Türkçe",
+    "en": "English",
+    "de": "Deutsch"
+  },
+  "onboarding": {
+    "music": {
+      "title": "Welche Musikgenres magst du?",
+      "subtitle": "Für Musikempfehlungen basierend auf deiner Stimmung"
+    },
+    "hobbies": {
+      "title": "Was machst du in deiner Freizeit?",
+      "subtitle": "Für Aktivitätsempfehlungen"
+    },
+    "sleep": {
+      "title": "Wie ist dein Schlafmuster?",
+      "subtitle": "Um dein Energieniveau besser zu verstehen"
+    },
+    "exercise": {
+      "title": "Wie oft trainierst du?",
+      "subtitle": "Für Empfehlungen zur körperlichen Aktivität"
+    },
+    "personality": {
+      "title": "Wie würdest du dich beschreiben?",
+      "subtitle": "Für persönlichkeitsbasierte Empfehlungen"
+    },
+    "goals": {
+      "title": "Was sind deine emotionalen Ziele?",
+      "subtitle": "Für personalisierte Ratschläge"
+    }
+  },
+  "tabs": {
+    "journal": "Tagebuch",
+    "calendar": "Kalender",
+    "reports": "Berichte"
+  },
+  "insights": {
+    "title": "Einblicke",
+    "suggestion": "Vorschlag",
+    "basedOnMood": "Basierend auf deiner Stimmung"
+  }
+}

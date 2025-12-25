@@ -1,0 +1,188 @@
+{
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "success": "Success",
+    "back": "Back",
+    "next": "Next",
+    "close": "Close",
+    "confirm": "Confirm",
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "thisWeek": "This Week",
+    "thisMonth": "This Month"
+  },
+  "auth": {
+    "login": "Sign In",
+    "register": "Sign Up",
+    "logout": "Sign Out",
+    "email": "Email",
+    "password": "Password",
+    "forgotPassword": "Forgot password",
+    "resetPassword": "Reset Password",
+    "newPassword": "New Password",
+    "confirmPassword": "Confirm Password",
+    "loginToAccount": "Sign in to your account",
+    "createAccount": "Create a new account",
+    "emailPlaceholder": "example@email.com",
+    "passwordPlaceholder": "••••••••",
+    "loginSuccess": "Login successful!",
+    "registerSuccess": "Registration successful! You can now sign in.",
+    "resetEmailSent": "Password reset link has been sent to your email.",
+    "passwordResetSuccess": "Your password has been successfully updated!",
+    "invalidCredentials": "Invalid email or password"
+  },
+  "landing": {
+    "title": "Emotion Journal",
+    "subtitle": "Discover your emotions through writing",
+    "hero": "Discover Your Emotions",
+    "heroSubtitle": "Increase your emotional awareness through journaling, get to know yourself better with AI-powered analysis.",
+    "startFree": "Start Free",
+    "viewPricing": "View Pricing",
+    "features": "Features",
+    "feature1Title": "Emotion Tracking",
+    "feature1Desc": "Record your daily emotions and see changes over time.",
+    "feature2Title": "AI Analysis",
+    "feature2Desc": "Discover your emotional patterns with artificial intelligence.",
+    "feature3Title": "Personal Recommendations",
+    "feature3Desc": "Get personalized activity suggestions based on your mood."
+  },
+  "journal": {
+    "title": "Journal",
+    "newEntry": "New Entry",
+    "howDoYouFeel": "How are you feeling today?",
+    "writeFeelings": "Write your feelings...",
+    "writeHere": "Write here...",
+    "intensity": "Intensity",
+    "triggers": "Triggers",
+    "selectTriggers": "Select triggers",
+    "analyze": "Analyze",
+    "analyzing": "Analyzing...",
+    "save": "Save",
+    "noEntries": "No journal entries yet",
+    "startWriting": "Start writing your feelings!",
+    "entrySaved": "Journal entry saved!",
+    "entryDeleted": "Journal entry deleted",
+    "viewAll": "View All",
+    "recentEntries": "Recent Entries",
+    "emotionCalendar": "Emotion Calendar",
+    "stats": "Statistics",
+    "history": "History"
+  },
+  "emotions": {
+    "happy": "Happy",
+    "sad": "Sad",
+    "anxious": "Anxious",
+    "angry": "Angry",
+    "neutral": "Neutral",
+    "excited": "Excited",
+    "calm": "Calm"
+  },
+  "triggers": {
+    "work": "Work",
+    "family": "Family",
+    "health": "Health",
+    "relationships": "Relationships",
+    "finance": "Finance",
+    "sleep": "Sleep",
+    "weather": "Weather",
+    "social": "Social",
+    "exercise": "Exercise",
+    "food": "Food"
+  },
+  "reports": {
+    "title": "Reports",
+    "weekly": "Weekly Report",
+    "monthly": "Monthly Report",
+    "last7Days": "Last 7 days",
+    "last30Days": "Last 30 days",
+    "totalEntries": "Total Entries",
+    "avgIntensity": "Avg. Intensity",
+    "dominantEmotion": "Dominant Emotion",
+    "emotionBreakdown": "Emotion Breakdown",
+    "trend": "Trend",
+    "trendUp": "You're feeling better this week compared to last week! 🎉",
+    "trendDown": "You seem to have had a tough week, take care of yourself 💙",
+    "trendStable": "You're maintaining emotional balance this week ⚖️",
+    "noData": "Not enough data for this period",
+    "aiAnalysis": "AI Deep Analysis",
+    "generateAnalysis": "Generate AI Analysis",
+    "savedAnalyses": "Saved Analyses",
+    "emotionalJourney": "Emotional Journey",
+    "triggerAnalysis": "Trigger Analysis",
+    "patternInsights": "Emotion Patterns",
+    "weeklyNarrative": "Weekly Progress",
+    "wellbeingSummary": "Overall Wellbeing",
+    "recommendations": "Recommendations",
+    "topTriggers": "Top Triggers",
+    "positiveRatio": "Positive Ratio",
+    "negativeRatio": "Negative Ratio"
+  },
+  "profile": {
+    "title": "Profile",
+    "subtitle": "Edit your preferences",
+    "preferences": "Preferences",
+    "themeColor": "Theme Color",
+    "themeColorDesc": "Choose app color",
+    "language": "Language",
+    "languageDesc": "Choose app language",
+    "accountInfo": "Account Info",
+    "emailAddress": "Your email address",
+    "preferencesSaved": "Preferences updated!",
+    "themeChanged": "Theme color changed!",
+    "languageChanged": "Language changed!"
+  },
+  "colors": {
+    "purple": "Purple",
+    "blue": "Blue",
+    "green": "Green",
+    "orange": "Orange",
+    "pink": "Pink",
+    "teal": "Teal"
+  },
+  "languages": {
+    "tr": "Türkçe",
+    "en": "English",
+    "de": "Deutsch"
+  },
+  "onboarding": {
+    "music": {
+      "title": "What music genres do you like?",
+      "subtitle": "For music recommendations based on your mood"
+    },
+    "hobbies": {
+      "title": "What do you do in your free time?",
+      "subtitle": "For activity recommendations"
+    },
+    "sleep": {
+      "title": "How is your sleep pattern?",
+      "subtitle": "To better understand your energy levels"
+    },
+    "exercise": {
+      "title": "How often do you exercise?",
+      "subtitle": "For physical activity recommendations"
+    },
+    "personality": {
+      "title": "How would you describe yourself?",
+      "subtitle": "For personality-based recommendations"
+    },
+    "goals": {
+      "title": "What are your emotional goals?",
+      "subtitle": "For personalized advice"
+    }
+  },
+  "tabs": {
+    "journal": "Journal",
+    "calendar": "Calendar",
+    "reports": "Reports"
+  },
+  "insights": {
+    "title": "Insights",
+    "suggestion": "Suggestion",
+    "basedOnMood": "Based on your mood"
+  }
+}
