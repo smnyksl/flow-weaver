@@ -15,7 +15,7 @@ interface AIAnalysisResponse {
   monthlyInsight?: string;
 }
 
-export function useJournal(userId: string | undefined, userPreferences?: UserPreferences | null, subscriptionLimits?: { dailyEntryLimit: number; historyDays: number }) {
+export function useJournal(userId: string | undefined, userPreferences?: UserPreferences | null, subscriptionLimits?: { dailyEntryLimit: number; historyDays: number; hasAdvancedAnalysis: boolean }) {
   const [entries, setEntries] = useState<JournalEntry[]>([]);
   const [currentAnalysis, setCurrentAnalysis] = useState<EmotionAnalysis | null>(null);
   const [currentInsights, setCurrentInsights] = useState<{ weekly?: string; monthly?: string } | null>(null);
@@ -92,35 +92,48 @@ export function useJournal(userId: string | undefined, userPreferences?: UserPre
     setIsAnalyzing(true);
     
     try {
-      // Get historical entries for context
-      const historicalEntries = entries.map(e => ({
-        primary_emotion: e.emotion?.primaryEmotion || 'neutral',
-        intensity: e.emotion?.intensity || 5,
-        triggers: e.emotion?.triggers || [],
-        created_at: e.createdAt.toISOString()
-      }));
+      const isPremium = subscriptionLimits?.hasAdvancedAnalysis ?? false;
+      
+      let data, error;
+      
+      if (isPremium) {
+        // Premium: Use advanced AI analysis with full context
+        const historicalEntries = entries.map(e => ({
+          primary_emotion: e.emotion?.primaryEmotion || 'neutral',
+          intensity: e.emotion?.intensity || 5,
+          triggers: e.emotion?.triggers || [],
+          created_at: e.createdAt.toISOString()
+        }));
 
-      // Prepare user preferences for AI
-      const preferences = userPreferences ? {
-        musicGenres: userPreferences.music_genres || [],
-        hobbies: userPreferences.hobbies || [],
-        sleepPattern: userPreferences.sleep_pattern,
-        exerciseFrequency: userPreferences.exercise_frequency,
-        personalityType: userPreferences.personality_type,
-        stressCoping: userPreferences.stress_coping || [],
-        meditationExperience: userPreferences.meditation_experience,
-        emotionalGoals: userPreferences.emotional_goals || []
-      } : null;
+        const preferences = userPreferences ? {
+          musicGenres: userPreferences.music_genres || [],
+          hobbies: userPreferences.hobbies || [],
+          sleepPattern: userPreferences.sleep_pattern,
+          exerciseFrequency: userPreferences.exercise_frequency,
+          personalityType: userPreferences.personality_type,
+          stressCoping: userPreferences.stress_coping || [],
+          meditationExperience: userPreferences.meditation_experience,
+          emotionalGoals: userPreferences.emotional_goals || []
+        } : null;
 
-      // Call AI emotion analysis with historical context and preferences
-      const { data, error } = await supabase.functions.invoke('analyze-emotion', {
-        body: { 
-          text: content,
-          historicalEntries,
-          recentSuggestions: recentSuggestionsRef.current,
-          userPreferences: preferences
-        }
-      });
+        const result = await supabase.functions.invoke('analyze-emotion', {
+          body: { 
+            text: content,
+            historicalEntries,
+            recentSuggestions: recentSuggestionsRef.current,
+            userPreferences: preferences
+          }
+        });
+        data = result.data;
+        error = result.error;
+      } else {
+        // Free: Use basic keyword-based analysis
+        const result = await supabase.functions.invoke('analyze-emotion-basic', {
+          body: { text: content }
+        });
+        data = result.data;
+        error = result.error;
+      }
 
       if (error) {
         console.error('Edge function error:', error);
