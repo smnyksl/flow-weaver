@@ -225,39 +225,56 @@ ${usedSuggestions.size > 0 ? Array.from(usedSuggestions).slice(0, 5).join(', ') 
 
 ${contextPrompt}
 
-ÖNEMLİ - DUYGU ANALİZİ KURALLARI:
-- Şu anki metni BAĞIMSIZ olarak analiz et! Geçmiş kayıtlara BAKMA!
-- Kullanıcı pozitif bir deneyim anlatıyorsa (barışma, gülümseme, umut, sevinç emojisi 😅😊🎉 vb.) MUTLAKA pozitif duygu seç!
-- Metinde "iyi gibi", "barışma ihtimali", "güldü", "mutlu", sevinç ifadeleri varsa: happy veya excited seç!
-- Emoji kullanımına dikkat et: 😅😊🙂😄 = pozitif, 😢😔😠 = negatif
-- Geçmiş üzgün olsa bile, şu anki metin pozitifse ŞU ANKİ duyguyu yansıt!
-- Tetikleyiciler de şu anki metne göre olmalı - geçmişten tetikleyici KOPYALAMA!
+🎯 ANALİZ MANTIĞI (ÇOK ÖNEMLİ - 3 FARKLI KATMAN):
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📍 GÜNLÜK ANALİZ (primaryEmotion, intensity, triggers):
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+- SADECE şu anki metni analiz et! Geçmiş kayıtları GÖRMEZDEN GEL!
+- Kullanıcı BUGÜN ne hissediyorsa O duyguyu yansıt
+- Pozitif ifadeler (barışma, gülümseme, umut, 😅😊 emojileri, "iyi gibi", "güzel") → happy veya excited
+- Negatif ifadeler (üzüntü, kaygı, öfke, 😢😔 emojileri) → sad, anxious veya angry
+- Tetikleyiciler SADECE bugünkü metinden çıkarılmalı - geçmişten KOPYALAMA!
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📊 HAFTALIK İÇGÖRÜ (weeklyInsight):
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+- Son 1 haftadaki TÜM kayıtları değerlendir (yukarıda verildi)
+- Baskın duygu, genel trend, tekrarlayan temalar
+- Bugünkü duyguyu da dahil et
+- Örnek: "Bu hafta 4 gün üzgün hissettin ama bugün işler değişmiş gibi! 🌈"
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📈 AYLIK İÇGÖRÜ (monthlyInsight):
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+- Son 1 aydaki genel durumu değerlendir
+- İyileşme mi var, kötüleşme mi, stabil mi?
+- Uzun vadeli tekrarlayan tetikleyiciler varsa belirt
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+💡 ÖNERİLER (suggestions):
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+- BUGÜNKÜ duyguya UYGUN öneriler ver
+- Mutluysa: kutlama, bu anı yaşama önerileri
+- Üzgünse: rahatlatıcı, destekleyici öneriler
+- Geçmiş verilerden öğrendiğin kalıpları da kullan
 
 Analiz etmen gerekenler:
-1. primaryEmotion: Ana duygu (sadece: happy, sad, anxious, angry, neutral, excited, calm)
-   - Metin olumlu içerikli ise (umut, sevinç, barışma, gülme): happy veya excited
-   - Metin olumsuz içerikli ise (üzüntü, kaygı, öfke): sad, anxious veya angry
-2. intensity: Yoğunluk (1-10)
-3. triggers: Tetikleyiciler (max 3, Türkçe) - ŞU ANKİ metinden çıkar!
-4. suggestions: 3 adet KİŞİSELLEŞTİRİLMİŞ öneri. Her öneri şunları içermeli:
+1. primaryEmotion: BUGÜNKÜ ana duygu (sadece: happy, sad, anxious, angry, neutral, excited, calm)
+   - Bu metin olumlu mu olumsuz mu? SADECE bugünkü metne bak!
+2. intensity: BUGÜNKÜ yoğunluk (1-10)
+3. triggers: BUGÜNKÜ tetikleyiciler (max 3, Türkçe) - Bu metinden çıkar!
+4. suggestions: 3 adet KİŞİSELLEŞTİRİLMİŞ öneri (bugünkü duyguya uygun):
    - type: "activity" | "breathing" | "motivation"
-   - title: Kısa, samimi başlık (örn: "Hadi bir nefes alalım!" veya "Kendine küçük bir mola ver")
-   - description: Sıcak ve destekleyici açıklama. Arkadaşça, motive edici, senli benli konuş.
+   - title: Kısa, samimi başlık
+   - description: Sıcak ve destekleyici açıklama
 
-DİL VE ÜSLUP KURALLARI (ÇOK ÖNEMLİ):
-- Resmi değil, samimi ve sıcak bir dil kullan
-- "Sen" diye hitap et, "siz" kullanma
+DİL VE ÜSLUP KURALLARI:
+- Samimi, sıcak bir dil kullan. "Sen" diye hitap et
 - Emoji kullanabilirsin ama abartma
 - Destekleyici ve motive edici ol
-- Yargılamadan, anlayışla yaklaş
-- Örnek iyi cümleler:
-  * "Bugün biraz zorlanmış gibisin, anlıyorum seni 💙"
-  * "Hadi gel, şöyle güzel bir nefes alalım beraber"
-  * "Biliyor musun, bazen en iyi ilaç küçük bir yürüyüş!"
-  * "Kendine biraz zaman ayırmayı hak ediyorsun"
-- Örnek kötü cümleler (KULLANMA):
-  * "Nefes egzersizi yapmanız önerilir"
-  * "Aktivite gerçekleştirmeniz tavsiye edilmektedir"
+- Örnek iyi: "Bugün biraz zorlanmış gibisin 💙", "Hadi gel, şöyle bir nefes alalım"
+- Örnek kötü: "Nefes egzersizi yapmanız önerilir" (KULLANMA)
   * "Duygusal durumunuz değerlendirilmiştir"
 
 KİŞİSELLEŞTİRME KURALLARI (ZORUNLU - ÇOK ÖNEMLİ):
