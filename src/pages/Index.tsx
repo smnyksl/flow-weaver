@@ -5,6 +5,7 @@ import { JournalInput } from '@/components/journal/JournalInput';
 import { EmotionDisplay } from '@/components/journal/EmotionDisplay';
 import { SuggestionList } from '@/components/journal/SuggestionList';
 import { InsightsPanel } from '@/components/journal/InsightsPanel';
+import { DetailedInsightsPanel } from '@/components/journal/DetailedInsightsPanel';
 import { JournalHistory } from '@/components/journal/JournalHistory';
 import { EmotionCalendar } from '@/components/journal/EmotionCalendar';
 import { RewardsPanel } from '@/components/journal/RewardsPanel';
@@ -18,7 +19,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { usePreferences } from '@/hooks/usePreferences';
 import { toast } from 'sonner';
 import { Suggestion, JournalEntry } from '@/types/journal';
-import { BookOpen, History, Calendar, Trophy, Loader2 } from 'lucide-react';
+import { BookOpen, History, Calendar, Trophy, Loader2, Brain } from 'lucide-react';
 
 const Index = () => {
   const navigate = useNavigate();
@@ -70,7 +71,7 @@ const Index = () => {
       <AppHeader onExportClick={() => setShowExportModal(true)} />
       
       <Tabs defaultValue="journal" className="flex-1 flex flex-col">
-        <TabsList className="w-full grid grid-cols-4 rounded-none border-b border-border bg-card h-14">
+        <TabsList className="w-full grid grid-cols-5 rounded-none border-b border-border bg-card h-14">
           <TabsTrigger value="journal" className="flex flex-col items-center gap-1 py-2 data-[state=active]:bg-transparent data-[state=active]:text-primary data-[state=active]:shadow-none">
             <BookOpen className="w-5 h-5" />
             <span className="text-xs">Günlük</span>
@@ -78,6 +79,10 @@ const Index = () => {
           <TabsTrigger value="history" className="flex flex-col items-center gap-1 py-2 data-[state=active]:bg-transparent data-[state=active]:text-primary data-[state=active]:shadow-none">
             <History className="w-5 h-5" />
             <span className="text-xs">Geçmiş</span>
+          </TabsTrigger>
+          <TabsTrigger value="insights" className="flex flex-col items-center gap-1 py-2 data-[state=active]:bg-transparent data-[state=active]:text-primary data-[state=active]:shadow-none">
+            <Brain className="w-5 h-5" />
+            <span className="text-xs">İçgörü</span>
           </TabsTrigger>
           <TabsTrigger value="calendar" className="flex flex-col items-center gap-1 py-2 data-[state=active]:bg-transparent data-[state=active]:text-primary data-[state=active]:shadow-none">
             <Calendar className="w-5 h-5" />
@@ -116,6 +121,14 @@ const Index = () => {
 
             <TabsContent value="history" className="mt-0">
               <JournalHistory entries={entries} onEntryClick={setSelectedEntry} />
+            </TabsContent>
+
+            <TabsContent value="insights" className="mt-0">
+              <DetailedInsightsPanel 
+                entries={entries}
+                weeklyInsight={currentInsights?.weekly}
+                monthlyInsight={currentInsights?.monthly}
+              />
             </TabsContent>
 
             <TabsContent value="calendar" className="mt-0">
