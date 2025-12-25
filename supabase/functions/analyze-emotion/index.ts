@@ -225,10 +225,20 @@ ${usedSuggestions.size > 0 ? Array.from(usedSuggestions).slice(0, 5).join(', ') 
 
 ${contextPrompt}
 
+ÖNEMLİ - DUYGU ANALİZİ KURALLARI:
+- Şu anki metni BAĞIMSIZ olarak analiz et! Geçmiş kayıtlara BAKMA!
+- Kullanıcı pozitif bir deneyim anlatıyorsa (barışma, gülümseme, umut, sevinç emojisi 😅😊🎉 vb.) MUTLAKA pozitif duygu seç!
+- Metinde "iyi gibi", "barışma ihtimali", "güldü", "mutlu", sevinç ifadeleri varsa: happy veya excited seç!
+- Emoji kullanımına dikkat et: 😅😊🙂😄 = pozitif, 😢😔😠 = negatif
+- Geçmiş üzgün olsa bile, şu anki metin pozitifse ŞU ANKİ duyguyu yansıt!
+- Tetikleyiciler de şu anki metne göre olmalı - geçmişten tetikleyici KOPYALAMA!
+
 Analiz etmen gerekenler:
 1. primaryEmotion: Ana duygu (sadece: happy, sad, anxious, angry, neutral, excited, calm)
+   - Metin olumlu içerikli ise (umut, sevinç, barışma, gülme): happy veya excited
+   - Metin olumsuz içerikli ise (üzüntü, kaygı, öfke): sad, anxious veya angry
 2. intensity: Yoğunluk (1-10)
-3. triggers: Tetikleyiciler (max 3, Türkçe)
+3. triggers: Tetikleyiciler (max 3, Türkçe) - ŞU ANKİ metinden çıkar!
 4. suggestions: 3 adet KİŞİSELLEŞTİRİLMİŞ öneri. Her öneri şunları içermeli:
    - type: "activity" | "breathing" | "motivation"
    - title: Kısa, samimi başlık (örn: "Hadi bir nefes alalım!" veya "Kendine küçük bir mola ver")
