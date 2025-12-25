@@ -21,20 +21,54 @@ const plans = [
     gradient: 'from-gray-500 to-gray-600',
   },
   {
-    name: 'Premium',
-    price: '₺49',
+    name: 'Haftalık',
+    price: '₺19',
     period: '/hafta',
-    description: 'Tam deneyim için en iyi seçim',
+    description: 'Kısa süreli deneyim için',
     features: [
       { text: 'Sınırsız duygu kaydı', included: true },
       { text: 'Haftalık ve aylık durum raporu', included: true },
       { text: 'AI destekli derinlemesine analizler', included: true },
       { text: 'Sınırsız geçmiş görüntüleme', included: true },
     ],
-    cta: 'Premium\'a Geç',
-    href: '/auth?signup=true&plan=premium',
+    cta: 'Haftalık Başla',
+    href: '/auth?signup=true&plan=weekly',
+    popular: false,
+    gradient: 'from-blue-500 to-cyan-500',
+  },
+  {
+    name: 'Aylık',
+    price: '₺69',
+    period: '/ay',
+    description: 'En popüler seçim',
+    savings: 'Haftalık yerine %10 tasarruf',
+    features: [
+      { text: 'Sınırsız duygu kaydı', included: true },
+      { text: 'Haftalık ve aylık durum raporu', included: true },
+      { text: 'AI destekli derinlemesine analizler', included: true },
+      { text: 'Sınırsız geçmiş görüntüleme', included: true },
+    ],
+    cta: 'Aylık Başla',
+    href: '/auth?signup=true&plan=monthly',
     popular: true,
     gradient: 'from-primary to-accent',
+  },
+  {
+    name: 'Yıllık',
+    price: '₺749',
+    period: '/yıl',
+    description: 'En avantajlı seçim',
+    savings: '₺79 tasarruf edin',
+    features: [
+      { text: 'Sınırsız duygu kaydı', included: true },
+      { text: 'Haftalık ve aylık durum raporu', included: true },
+      { text: 'AI destekli derinlemesine analizler', included: true },
+      { text: 'Sınırsız geçmiş görüntüleme', included: true },
+    ],
+    cta: 'Yıllık Başla',
+    href: '/auth?signup=true&plan=yearly',
+    popular: false,
+    gradient: 'from-amber-500 to-orange-500',
   },
 ];
 
@@ -118,7 +152,7 @@ export default function Pricing() {
       {/* Pricing Cards */}
       <section className="relative py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {plans.map((plan, index) => (
               <div
                 key={plan.name}
@@ -146,47 +180,54 @@ export default function Pricing() {
 
                 {/* Card */}
                 <div className={cn(
-                  "relative h-full p-8 bg-card/80 backdrop-blur-sm rounded-3xl border transition-all duration-500 hover:-translate-y-2",
+                  "relative h-full p-6 bg-card/80 backdrop-blur-sm rounded-2xl border transition-all duration-500 hover:-translate-y-2",
                   plan.popular 
                     ? "border-primary/50 shadow-xl shadow-primary/10" 
                     : "border-border/50 hover:border-primary/30"
                 )}>
                   {/* Plan icon */}
                   <div className={cn(
-                    "w-14 h-14 rounded-2xl bg-gradient-to-br flex items-center justify-center mb-6 group-hover:scale-110 transition-transform",
+                    "w-12 h-12 rounded-xl bg-gradient-to-br flex items-center justify-center mb-4 group-hover:scale-110 transition-transform",
                     plan.gradient
                   )}>
-                    {plan.name === 'Ücretsiz' && <Zap className="w-7 h-7 text-white" />}
-                    {plan.name === 'Premium' && <Sparkles className="w-7 h-7 text-white" />}
+                    {plan.name === 'Ücretsiz' && <Zap className="w-6 h-6 text-white" />}
+                    {plan.name === 'Haftalık' && <Sparkles className="w-6 h-6 text-white" />}
+                    {plan.name === 'Aylık' && <Crown className="w-6 h-6 text-white" />}
+                    {plan.name === 'Yıllık' && <Star className="w-6 h-6 text-white fill-white" />}
                   </div>
 
                   {/* Plan name */}
-                  <h3 className="text-2xl font-bold text-foreground mb-2">{plan.name}</h3>
-                  <p className="text-muted-foreground text-sm mb-6">{plan.description}</p>
+                  <h3 className="text-xl font-bold text-foreground mb-1">{plan.name}</h3>
+                  <p className="text-muted-foreground text-sm mb-2">{plan.description}</p>
+                  {plan.savings && (
+                    <span className="inline-block px-2 py-1 text-xs font-medium text-green-600 bg-green-100 dark:bg-green-900/30 dark:text-green-400 rounded-full mb-4">
+                      {plan.savings}
+                    </span>
+                  )}
 
                   {/* Price */}
-                  <div className="flex items-baseline gap-1 mb-8">
+                  <div className="flex items-baseline gap-1 mb-6">
                     <span className={cn(
-                      "text-4xl sm:text-5xl font-bold bg-gradient-to-r bg-clip-text text-transparent",
+                      "text-3xl font-bold bg-gradient-to-r bg-clip-text text-transparent",
                       plan.gradient
                     )}>
                       {plan.price}
                     </span>
-                    <span className="text-muted-foreground">{plan.period}</span>
+                    <span className="text-muted-foreground text-sm">{plan.period}</span>
                   </div>
 
                   {/* CTA Button */}
-                  <Link to={plan.href} className="block mb-8">
+                  <Link to={plan.href} className="block mb-6">
                     <Button 
                       className={cn(
-                        "w-full py-6 text-lg font-medium transition-all hover:scale-105 gap-2",
+                        "w-full py-4 text-sm font-medium transition-all hover:scale-105 gap-2",
                         plan.popular 
                           ? "bg-gradient-to-r from-primary to-accent hover:opacity-90 shadow-lg shadow-primary/25"
                           : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
                       )}
                     >
                       {plan.cta}
-                      <ArrowRight className="w-5 h-5" />
+                      <ArrowRight className="w-4 h-4" />
                     </Button>
                   </Link>
 
