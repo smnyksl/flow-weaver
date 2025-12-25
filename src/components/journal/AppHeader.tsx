@@ -1,5 +1,6 @@
-import { BookHeart, LogOut, Download, MoreVertical, User } from 'lucide-react';
+import { BookHeart, LogOut, Download, MoreVertical, User, Crown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,9 +14,10 @@ import { useNavigate } from 'react-router-dom';
 
 interface AppHeaderProps {
   onExportClick?: () => void;
+  isPremium?: boolean;
 }
 
-export function AppHeader({ onExportClick }: AppHeaderProps) {
+export function AppHeader({ onExportClick, isPremium }: AppHeaderProps) {
   const { signOut } = useAuth();
   const navigate = useNavigate();
 
@@ -37,9 +39,17 @@ export function AppHeader({ onExportClick }: AppHeaderProps) {
             <div className="w-10 h-10 rounded-lg flow-gradient flex items-center justify-center">
               <BookHeart className="w-5 h-5 text-primary-foreground" />
             </div>
-            <div>
-              <h1 className="text-lg font-semibold text-foreground">Duygu Günlüğü</h1>
-              <p className="text-xs text-muted-foreground">Duygularını keşfet</p>
+            <div className="flex items-center gap-2">
+              <div>
+                <h1 className="text-lg font-semibold text-foreground">Duygu Günlüğü</h1>
+                <p className="text-xs text-muted-foreground">Duygularını keşfet</p>
+              </div>
+              {isPremium && (
+                <Badge className="bg-gradient-to-r from-primary to-accent text-white border-0 gap-1">
+                  <Crown className="w-3 h-3" />
+                  Premium
+                </Badge>
+              )}
             </div>
           </div>
           

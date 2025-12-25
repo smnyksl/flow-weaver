@@ -4,6 +4,7 @@ import { UserPreferences } from '@/types/preferences';
 import { getRandomSuggestions } from '@/data/emotionData';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { startOfDay, isAfter, subDays } from 'date-fns';
 
 interface AIAnalysisResponse {
   primaryEmotion: Emotion;
@@ -14,7 +15,7 @@ interface AIAnalysisResponse {
   monthlyInsight?: string;
 }
 
-export function useJournal(userId: string | undefined, userPreferences?: UserPreferences | null) {
+export function useJournal(userId: string | undefined, userPreferences?: UserPreferences | null, subscriptionLimits?: { dailyEntryLimit: number; historyDays: number }) {
   const [entries, setEntries] = useState<JournalEntry[]>([]);
   const [currentAnalysis, setCurrentAnalysis] = useState<EmotionAnalysis | null>(null);
   const [currentInsights, setCurrentInsights] = useState<{ weekly?: string; monthly?: string } | null>(null);
@@ -75,6 +76,17 @@ export function useJournal(userId: string | undefined, userPreferences?: UserPre
     if (!userId) {
       toast.error('Giriş yapmanız gerekiyor');
       return null;
+    }
+
+    // Check daily entry limit for free users
+    if (subscriptionLimits && subscriptionLimits.dailyEntryLimit !== Infinity) {
+      const todayStart = startOfDay(new Date());
+      const todayEntries = entries.filter(e => isAfter(e.createdAt, todayStart));
+      
+      if (todayEntries.length >= subscriptionLimits.dailyEntryLimit) {
+        toast.error(`Ücretsiz planda günde ${subscriptionLimits.dailyEntryLimit} giriş yapabilirsiniz. Premium'a geçin!`);
+        return null;
+      }
     }
     
     setIsAnalyzing(true);
@@ -215,7 +227,7 @@ export function useJournal(userId: string | undefined, userPreferences?: UserPre
       
       return newEntry;
     }
-  }, [userId, entries, userPreferences]);
+  }, [userId, entries, userPreferences, subscriptionLimits]);
 
   const deleteEntry = useCallback(async (id: string) => {
     try {
@@ -239,8 +251,14 @@ export function useJournal(userId: string | undefined, userPreferences?: UserPre
     setCurrentInsights(null);
   }, []);
 
+  // Filter entries based on subscription limits
+  const filteredEntries = subscriptionLimits && subscriptionLimits.historyDays !== Infinity
+    ? entries.filter(e => isAfter(e.createdAt, subDays(new Date(), subscriptionLimits.historyDays)))
+    : entries;
+
   return {
-    entries,
+    entries: filteredEntries,
+    allEntries: entries,
     currentAnalysis,
     currentInsights,
     isAnalyzing,

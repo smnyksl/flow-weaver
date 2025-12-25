@@ -18,17 +18,19 @@ import { useJournal } from '@/hooks/useJournal';
 import { useRewards } from '@/hooks/useRewards';
 import { useAuth } from '@/hooks/useAuth';
 import { usePreferences } from '@/hooks/usePreferences';
+import { useSubscription } from '@/hooks/useSubscription';
 import { toast } from 'sonner';
 import { Suggestion, JournalEntry } from '@/types/journal';
-import { BookOpen, History, Calendar, Trophy, Loader2, BarChart3 } from 'lucide-react';
+import { BookOpen, History, Calendar, Trophy, Loader2, BarChart3, Crown } from 'lucide-react';
 
 const Index = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const { user, loading: authLoading } = useAuth();
   const { preferences, loading: prefLoading } = usePreferences(user?.id);
-  const { entries, currentAnalysis, currentInsights, isAnalyzing, isLoading, addEntry } = useJournal(user?.id, preferences);
-  const { achievements, stats, getProgress } = useRewards(entries, user?.id);
+  const { isPremium, limits, loading: subLoading } = useSubscription();
+  const { entries, allEntries, currentAnalysis, currentInsights, isAnalyzing, isLoading, addEntry } = useJournal(user?.id, preferences, limits);
+  const { achievements, stats, getProgress } = useRewards(allEntries || entries, user?.id);
   const [latestSuggestions, setLatestSuggestions] = useState<Suggestion[]>([]);
   const [selectedEntry, setSelectedEntry] = useState<JournalEntry | null>(null);
   const [showExportModal, setShowExportModal] = useState(false);
@@ -56,7 +58,7 @@ const Index = () => {
     }
   };
 
-  if (authLoading || isLoading || prefLoading) {
+  if (authLoading || isLoading || prefLoading || subLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -70,7 +72,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      <AppHeader onExportClick={() => setShowExportModal(true)} />
+      <AppHeader onExportClick={() => setShowExportModal(true)} isPremium={isPremium} />
       
       <Tabs defaultValue="journal" className="flex-1 flex flex-col">
         <TabsList className="w-full grid grid-cols-5 rounded-none border-b border-border bg-card h-14">
@@ -126,12 +128,21 @@ const Index = () => {
             </TabsContent>
 
             <TabsContent value="insights" className="mt-0">
-              <InsightsReportPanel 
-                entries={entries}
-                userId={user.id}
-                weeklyInsight={currentInsights?.weekly}
-                monthlyInsight={currentInsights?.monthly}
-              />
+              {isPremium ? (
+                <InsightsReportPanel 
+                  entries={allEntries || entries}
+                  userId={user.id}
+                  weeklyInsight={currentInsights?.weekly}
+                  monthlyInsight={currentInsights?.monthly}
+                />
+              ) : (
+                <div className="flex flex-col items-center justify-center py-12 text-center">
+                  <Crown className="w-12 h-12 text-primary/50 mb-4" />
+                  <h3 className="text-lg font-semibold text-foreground mb-2">Premium Özelliği</h3>
+                  <p className="text-muted-foreground mb-4">Haftalık ve aylık raporlar sadece Premium üyelere özel.</p>
+                  <a href="/pricing" className="text-primary hover:underline">Premium'a Geç →</a>
+                </div>
+              )}
             </TabsContent>
 
             <TabsContent value="calendar" className="mt-0">
