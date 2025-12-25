@@ -29,7 +29,7 @@ const plans = [
   {
     name: 'Premium',
     price: '₺49',
-    period: '/ay',
+    period: '/hafta',
     description: 'Tam deneyim için en iyi seçim',
     features: [
       { text: 'Sınırsız duygu kaydı', included: true },
@@ -47,28 +47,6 @@ const plans = [
     href: '/auth?signup=true&plan=premium',
     popular: true,
     gradient: 'from-primary to-accent',
-  },
-  {
-    name: 'Pro',
-    price: '₺99',
-    period: '/ay',
-    description: 'Profesyoneller ve terapistler için',
-    features: [
-      { text: 'Premium\'un tüm özellikleri', included: true },
-      { text: 'Çoklu profil yönetimi', included: true },
-      { text: 'Gelişmiş raporlama araçları', included: true },
-      { text: 'API erişimi', included: true },
-      { text: 'Özel entegrasyonlar', included: true },
-      { text: 'Takım işbirliği özellikleri', included: true },
-      { text: 'Beyaz etiket seçeneği', included: true },
-      { text: '7/24 öncelikli destek', included: true },
-      { text: 'Kişisel hesap yöneticisi', included: true },
-      { text: 'Özel eğitim ve danışmanlık', included: true },
-    ],
-    cta: 'Pro\'ya Geç',
-    href: '/auth?signup=true&plan=pro',
-    popular: false,
-    gradient: 'from-purple-500 to-pink-500',
   },
 ];
 
@@ -152,7 +130,7 @@ export default function Pricing() {
       {/* Pricing Cards */}
       <section className="relative py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             {plans.map((plan, index) => (
               <div
                 key={plan.name}
@@ -192,7 +170,6 @@ export default function Pricing() {
                   )}>
                     {plan.name === 'Ücretsiz' && <Zap className="w-7 h-7 text-white" />}
                     {plan.name === 'Premium' && <Sparkles className="w-7 h-7 text-white" />}
-                    {plan.name === 'Pro' && <Crown className="w-7 h-7 text-white" />}
                   </div>
 
                   {/* Plan name */}
@@ -266,7 +243,7 @@ export default function Pricing() {
               <span className="font-semibold text-foreground">30 Gün Para İade Garantisi</span>
             </div>
             <p className="text-muted-foreground text-sm">
-              Premium veya Pro planlarımızdan memnun kalmazsanız, 30 gün içinde tam para iadesi alabilirsiniz. Hiçbir soru sorulmaz.
+              Premium planımızdan memnun kalmazsanız, 30 gün içinde tam para iadesi alabilirsiniz. Hiçbir soru sorulmaz.
             </p>
           </div>
         </div>
