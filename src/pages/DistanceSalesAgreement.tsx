@@ -1,18 +1,11 @@
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-
 const DistanceSalesAgreement = () => {
   const navigate = useNavigate();
-
-  return (
-    <div className="min-h-screen bg-background">
+  return <div className="min-h-screen bg-background">
       <div className="container max-w-4xl mx-auto px-4 py-8">
-        <Button
-          variant="ghost"
-          onClick={() => navigate(-1)}
-          className="mb-6"
-        >
+        <Button variant="ghost" onClick={() => navigate(-1)} className="mb-6">
           <ArrowLeft className="w-4 h-4 mr-2" />
           Geri
         </Button>
@@ -24,8 +17,12 @@ const DistanceSalesAgreement = () => {
         <div className="prose prose-gray dark:prose-invert max-w-none space-y-6">
           <section>
             <h2 className="text-xl font-semibold text-foreground mb-4">MADDE 1 - TARAFLAR</h2>
-            <p className="text-muted-foreground leading-relaxed">
-              <strong>1.1. SATICI:</strong><br />
+            <p className="text-muted-foreground leading-relaxed">1.1. SATICI:
+Unvan: Diarylogs
+E-posta: support@diarylogs.com  
+
+1.2. ALICI:
+Uygulama üzerinden üyelik oluşturan ve abonelik satın alan kullanıcı.<strong>1.1. SATICI:</strong><br />
               Unvan: Duygu Günlüğü<br />
               E-posta: destek@duygugulugu.com<br /><br />
               <strong>1.2. ALICI:</strong><br />
@@ -99,8 +96,11 @@ const DistanceSalesAgreement = () => {
 
           <section>
             <h2 className="text-xl font-semibold text-foreground mb-4">MADDE 7 - ABONELİK İPTALİ</h2>
-            <p className="text-muted-foreground leading-relaxed">
-              <strong>7.1.</strong> ALICI, aboneliğini istediği zaman uygulama üzerinden veya 
+            <p className="text-muted-foreground leading-relaxed">7.1. ALICI, aboneliğini istediği zaman uygulama üzerinden veya support@diarylogs.com adresine e-posta göndererek iptal edebilir.
+
+7.2. İptal işlemi, mevcut abonelik döneminin sonunda geçerli olur. İptal tarihine kadar olan süre için iade yapılmaz.
+
+7.3. İptal sonrasında Premium özellikler, mevcut abonelik döneminin sonuna kadar kullanılabilir.<strong>7.1.</strong> ALICI, aboneliğini istediği zaman uygulama üzerinden veya 
               destek@duygugulugu.com adresine e-posta göndererek iptal edebilir.<br /><br />
               <strong>7.2.</strong> İptal işlemi, mevcut abonelik döneminin sonunda geçerli olur. 
               İptal tarihine kadar olan süre için iade yapılmaz.<br /><br />
@@ -143,8 +143,6 @@ const DistanceSalesAgreement = () => {
           </p>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default DistanceSalesAgreement;
