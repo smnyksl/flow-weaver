@@ -1,9 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+
 const DistanceSalesAgreement = () => {
   const navigate = useNavigate();
-  return <div className="min-h-screen bg-background">
+  
+  return (
+    <div className="min-h-screen bg-background">
       <div className="container max-w-4xl mx-auto px-4 py-8">
         <Button variant="ghost" onClick={() => navigate(-1)} className="mb-6">
           <ArrowLeft className="w-4 h-4 mr-2" />
@@ -17,15 +20,16 @@ const DistanceSalesAgreement = () => {
         <div className="prose prose-gray dark:prose-invert max-w-none space-y-6">
           <section>
             <h2 className="text-xl font-semibold text-foreground mb-4">MADDE 1 - TARAFLAR</h2>
-            <p className="text-muted-foreground leading-relaxed">1.1. SATICI:
-Unvan: Diarylogs
-E-posta: support@diarylogs.com  
-
-1.2. ALICI:
-Uygulama üzerinden üyelik oluşturan ve abonelik satın alan kullanıcı.<strong>1.1. SATICI:</strong><br />
-              Unvan: Duygu Günlüğü<br />
-              E-posta: destek@duygugulugu.com<br /><br />
-              <strong>1.2. ALICI:</strong><br />
+            <p className="text-muted-foreground leading-relaxed">
+              <strong>1.1. SATICI:</strong>
+              <br />
+              Unvan: Diarylogs
+              <br />
+              E-posta: support@diarylogs.com
+              <br />
+              <br />
+              <strong>1.2. ALICI:</strong>
+              <br />
               Uygulama üzerinden üyelik oluşturan ve abonelik satın alan kullanıcı.
             </p>
           </section>
@@ -85,10 +89,14 @@ Uygulama üzerinden üyelik oluşturan ve abonelik satın alan kullanıcı.<stro
             <h2 className="text-xl font-semibold text-foreground mb-4">MADDE 6 - CAYMA HAKKI</h2>
             <p className="text-muted-foreground leading-relaxed">
               <strong>6.1.</strong> ALICI, dijital içerik ve hizmetlerin ifasına başlanmasından önce 
-              14 gün içinde cayma hakkını kullanabilir.<br /><br />
+              14 gün içinde cayma hakkını kullanabilir.
+              <br />
+              <br />
               <strong>6.2.</strong> Mesafeli Sözleşmeler Yönetmeliği'nin 15/ğ maddesi uyarınca, 
               elektronik ortamda anında ifa edilen hizmetlerde ve tüketiciye anında teslim edilen 
-              gayri maddi mallarda cayma hakkı kullanılamaz.<br /><br />
+              gayri maddi mallarda cayma hakkı kullanılamaz.
+              <br />
+              <br />
               <strong>6.3.</strong> Premium abonelik satın alındığında hizmet anında başladığından, 
               ALICI cayma hakkından feragat ettiğini kabul eder.
             </p>
@@ -96,14 +104,15 @@ Uygulama üzerinden üyelik oluşturan ve abonelik satın alan kullanıcı.<stro
 
           <section>
             <h2 className="text-xl font-semibold text-foreground mb-4">MADDE 7 - ABONELİK İPTALİ</h2>
-            <p className="text-muted-foreground leading-relaxed">7.1. ALICI, aboneliğini istediği zaman uygulama üzerinden veya support@diarylogs.com adresine e-posta göndererek iptal edebilir.
-
-7.2. İptal işlemi, mevcut abonelik döneminin sonunda geçerli olur. İptal tarihine kadar olan süre için iade yapılmaz.
-
-7.3. İptal sonrasında Premium özellikler, mevcut abonelik döneminin sonuna kadar kullanılabilir.<strong>7.1.</strong> ALICI, aboneliğini istediği zaman uygulama üzerinden veya 
-              destek@duygugulugu.com adresine e-posta göndererek iptal edebilir.<br /><br />
+            <p className="text-muted-foreground leading-relaxed">
+              <strong>7.1.</strong> ALICI, aboneliğini istediği zaman uygulama üzerinden veya 
+              support@diarylogs.com adresine e-posta göndererek iptal edebilir.
+              <br />
+              <br />
               <strong>7.2.</strong> İptal işlemi, mevcut abonelik döneminin sonunda geçerli olur. 
-              İptal tarihine kadar olan süre için iade yapılmaz.<br /><br />
+              İptal tarihine kadar olan süre için iade yapılmaz.
+              <br />
+              <br />
               <strong>7.3.</strong> İptal sonrasında Premium özellikler, mevcut abonelik 
               döneminin sonuna kadar kullanılabilir.
             </p>
@@ -113,9 +122,13 @@ Uygulama üzerinden üyelik oluşturan ve abonelik satın alan kullanıcı.<stro
             <h2 className="text-xl font-semibold text-foreground mb-4">MADDE 8 - GENEL HÜKÜMLER</h2>
             <p className="text-muted-foreground leading-relaxed">
               <strong>8.1.</strong> ALICI, işbu Sözleşme'yi ve Ön Bilgilendirme Formu'nu okuduğunu, 
-              anladığını ve kabul ettiğini beyan eder.<br /><br />
+              anladığını ve kabul ettiğini beyan eder.
+              <br />
+              <br />
               <strong>8.2.</strong> SATICI, önceden bildirmeksizin hizmet ücretlerini ve içeriğini 
-              değiştirme hakkını saklı tutar. Değişiklikler mevcut abonelikleri etkilemez.<br /><br />
+              değiştirme hakkını saklı tutar. Değişiklikler mevcut abonelikleri etkilemez.
+              <br />
+              <br />
               <strong>8.3.</strong> İşbu Sözleşme'den doğabilecek uyuşmazlıklarda Türkiye Cumhuriyeti 
               mahkemeleri ve icra daireleri yetkilidir.
             </p>
@@ -143,6 +156,8 @@ Uygulama üzerinden üyelik oluşturan ve abonelik satın alan kullanıcı.<stro
           </p>
         </div>
       </div>
-    </div>;
+    </div>
+  );
 };
+
 export default DistanceSalesAgreement;
