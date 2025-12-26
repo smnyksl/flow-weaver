@@ -2,19 +2,14 @@ import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-
 const Privacy = () => {
-  const { t } = useTranslation();
+  const {
+    t
+  } = useTranslation();
   const navigate = useNavigate();
-
-  return (
-    <div className="min-h-screen bg-background">
+  return <div className="min-h-screen bg-background">
       <div className="container max-w-4xl mx-auto px-4 py-8">
-        <Button
-          variant="ghost"
-          onClick={() => navigate(-1)}
-          className="mb-6"
-        >
+        <Button variant="ghost" onClick={() => navigate(-1)} className="mb-6">
           <ArrowLeft className="w-4 h-4 mr-2" />
           Geri
         </Button>
@@ -24,11 +19,7 @@ const Privacy = () => {
         <div className="prose prose-gray dark:prose-invert max-w-none space-y-6">
           <section>
             <h2 className="text-xl font-semibold text-foreground mb-4">1. Giriş</h2>
-            <p className="text-muted-foreground leading-relaxed">
-              Duygu Günlüğü uygulaması ("Uygulama") olarak, kullanıcılarımızın gizliliğine büyük önem veriyoruz. 
-              Bu Gizlilik Politikası, kişisel verilerinizin nasıl toplandığını, kullanıldığını, saklandığını ve 
-              korunduğunu açıklamaktadır.
-            </p>
+            <p className="text-muted-foreground leading-relaxed">Diarylogs uygulaması ("Uygulama") olarak, kullanıcılarımızın gizliliğine büyük önem veriyoruz. Bu Gizlilik Politikası, kişisel verilerinizin nasıl toplandığını, kullanıldığını, saklandığını ve korunduğunu açıklamaktadır.</p>
           </section>
 
           <section>
@@ -102,8 +93,8 @@ const Privacy = () => {
 
           <section>
             <h2 className="text-xl font-semibold text-foreground mb-4">8. İletişim</h2>
-            <p className="text-muted-foreground leading-relaxed">
-              Gizlilik politikamız hakkında sorularınız için bizimle iletişime geçebilirsiniz:<br />
+            <p className="text-muted-foreground leading-relaxed">Gizlilik politikamız hakkında sorularınız için bizimle iletişime geçebilirsiniz:
+E-posta: support@diarylogs.com  <br />
               E-posta: destek@duygugulugu.com
             </p>
           </section>
@@ -121,8 +112,6 @@ const Privacy = () => {
           </p>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default Privacy;
