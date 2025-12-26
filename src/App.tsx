@@ -14,6 +14,9 @@ import Auth from "./pages/Auth";
 import Onboarding from "./pages/Onboarding";
 import ResetPassword from "./pages/ResetPassword";
 import Profile from "./pages/Profile";
+import Privacy from "./pages/Privacy";
+import KVKK from "./pages/KVKK";
+import DistanceSalesAgreement from "./pages/DistanceSalesAgreement";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -69,6 +72,9 @@ const App = () => (
           <Route path="/onboarding" element={<Onboarding />} />
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/privacy" element={<Privacy />} />
+          <Route path="/kvkk" element={<KVKK />} />
+          <Route path="/mesafeli-satis-sozlesmesi" element={<DistanceSalesAgreement />} />
           <Route path="*" element={<Auth />} />
         </Routes>
       </BrowserRouter>

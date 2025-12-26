@@ -615,23 +615,39 @@ export default function Landing() {
       {/* Footer */}
       <footer className="py-12 px-4 sm:px-6 lg:px-8 border-t border-border/50 bg-card/30">
         <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-2 group">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center group-hover:scale-110 transition-transform">
-                <Heart className="w-4 h-4 text-white" />
+          <div className="flex flex-col gap-8">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="flex items-center gap-2 group">
+                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <Heart className="w-4 h-4 text-white" />
+                </div>
+                <span className="font-semibold text-foreground">Duygu Günlüğü</span>
               </div>
-              <span className="font-semibold text-foreground">Duygu Günlüğü</span>
+              <div className="flex items-center gap-4">
+                <Link to="/auth" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                  Giriş Yap
+                </Link>
+                <Link to="/auth?signup=true" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                  Kayıt Ol
+                </Link>
+              </div>
             </div>
-            <p className="text-sm text-muted-foreground">
-              © 2024 Duygu Günlüğü. Tüm hakları saklıdır.
-            </p>
-            <div className="flex items-center gap-4">
-              <Link to="/auth" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-                Giriş Yap
-              </Link>
-              <Link to="/auth?signup=true" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-                Kayıt Ol
-              </Link>
+            
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-border/30">
+              <p className="text-sm text-muted-foreground">
+                © 2024 Duygu Günlüğü. Tüm hakları saklıdır.
+              </p>
+              <div className="flex items-center gap-4 flex-wrap justify-center">
+                <Link to="/privacy" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                  Gizlilik Politikası
+                </Link>
+                <Link to="/kvkk" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                  KVKK Aydınlatma Metni
+                </Link>
+                <Link to="/mesafeli-satis-sozlesmesi" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                  Mesafeli Satış Sözleşmesi
+                </Link>
+              </div>
             </div>
           </div>
         </div>
