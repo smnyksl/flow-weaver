@@ -1,18 +1,11 @@
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-
 const KVKK = () => {
   const navigate = useNavigate();
-
-  return (
-    <div className="min-h-screen bg-background">
+  return <div className="min-h-screen bg-background">
       <div className="container max-w-4xl mx-auto px-4 py-8">
-        <Button
-          variant="ghost"
-          onClick={() => navigate(-1)}
-          className="mb-6"
-        >
+        <Button variant="ghost" onClick={() => navigate(-1)} className="mb-6">
           <ArrowLeft className="w-4 h-4 mr-2" />
           Geri
         </Button>
@@ -24,10 +17,7 @@ const KVKK = () => {
         <div className="prose prose-gray dark:prose-invert max-w-none space-y-6">
           <section>
             <h2 className="text-xl font-semibold text-foreground mb-4">1. Veri Sorumlusu</h2>
-            <p className="text-muted-foreground leading-relaxed">
-              6698 sayılı Kişisel Verilerin Korunması Kanunu ("KVKK") uyarınca, kişisel verileriniz 
-              veri sorumlusu sıfatıyla Duygu Günlüğü tarafından aşağıda açıklanan kapsamda işlenebilecektir.
-            </p>
+            <p className="text-muted-foreground leading-relaxed">6698 sayılı Kişisel Verilerin Korunması Kanunu ("KVKK") uyarınca, kişisel verileriniz veri sorumlusu sıfatıyla diarylogs tarafından aşağıda açıklanan kapsamda işlenebilecektir.</p>
           </section>
 
           <section>
@@ -126,9 +116,11 @@ const KVKK = () => {
 
           <section>
             <h2 className="text-xl font-semibold text-foreground mb-4">9. Başvuru Yöntemi</h2>
-            <p className="text-muted-foreground leading-relaxed">
-              Yukarıda belirtilen haklarınızı kullanmak için aşağıdaki iletişim kanallarından 
-              bize ulaşabilirsiniz:<br /><br />
+            <p className="text-muted-foreground leading-relaxed">Yukarıda belirtilen haklarınızı kullanmak için aşağıdaki iletişim kanallarından bize ulaşabilirsiniz:
+
+E-posta: support@diarylogs.com  
+
+Başvurularınız en geç 30 gün içinde sonuçlandırılacaktır.<br /><br />
               E-posta: kvkk@duygugulugu.com<br /><br />
               Başvurularınız en geç 30 gün içinde sonuçlandırılacaktır.
             </p>
@@ -148,8 +140,6 @@ const KVKK = () => {
           </p>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default KVKK;
