@@ -13,6 +13,7 @@ import { RewardsPanel } from '@/components/journal/RewardsPanel';
 import { EntryDetailModal } from '@/components/journal/EntryDetailModal';
 import { ExportDataModal } from '@/components/journal/ExportDataModal';
 import { AnalyzingAnimation } from '@/components/journal/AnalyzingAnimation';
+import { AnimatedCharacter } from '@/components/journal/AnimatedCharacter';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useJournal } from '@/hooks/useJournal';
 import { useRewards } from '@/hooks/useRewards';
@@ -100,7 +101,8 @@ const Index = () => {
 
         <main className="flex-1 overflow-y-auto">
           <div className="container mx-auto px-4 py-4 max-w-lg">
-            <TabsContent value="journal" className="mt-0 space-y-4">
+            <TabsContent value="journal" className="mt-0 space-y-4 relative">
+              <AnimatedCharacter />
               <JournalInput onSubmit={handleSubmit} isAnalyzing={isAnalyzing} />
               
               {/* Show analyzing animation while processing */}
